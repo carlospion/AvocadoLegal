@@ -370,17 +370,20 @@
 
                     <h6><i class="bi bi-4-circle me-2"></i>Configuración CSP (Si tienes errores)</h6>
                     <p>Si tu plataforma tiene <strong>Content Security Policy (CSP)</strong> y el widget no funciona,
-                        agrega estas directivas en tu <code>&lt;head&gt;</code>:</p>
+                        modifica tu CSP para incluir estas directivas:</p>
                     <div
-                        style="background:#1e293b; color:#a8d86e; padding:12px; border-radius:8px; font-family:monospace; font-size:0.75rem; overflow-x:auto; margin-bottom:10px;">
+                        style="background:#1e293b; color:#a8d86e; padding:12px; border-radius:8px; font-family:monospace; font-size:0.70rem; overflow-x:auto; margin-bottom:10px;">
                         &lt;meta http-equiv="Content-Security-Policy" content="<br>
+                        &nbsp;&nbsp;default-src 'self';<br>
                         &nbsp;&nbsp;script-src 'self' 'unsafe-inline' cdn.jsdelivr.net;<br>
+                        &nbsp;&nbsp;style-src 'self' 'unsafe-inline';<br>
                         &nbsp;&nbsp;connect-src 'self' TU-DOMINIO-API.com;<br>
                         &nbsp;&nbsp;frame-src 'self' TU-DOMINIO-API.com;<br>
                         "&gt;
                     </div>
-                    <p class="small text-muted mb-0">Reemplaza <code>TU-DOMINIO-API.com</code> con el dominio de
-                        AvocadoLegal.</p>
+                    <p class="small text-muted mb-0"><strong>Importante:</strong> Reemplaza
+                        <code>TU-DOMINIO-API.com</code> con el dominio real de la API (ej:
+                        <code>https://api.avocadolegal.com</code> o tu URL de ngrok).</p>
 
                     <div class="alert alert-success mb-0 mt-3">
                         <i class="bi bi-lightbulb me-2"></i>
