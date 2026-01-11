@@ -1,0 +1,86 @@
+{% extends "lawyers/base.html" %}
+{% block title %}Cola de Casos - JCJ Consultings{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Cola de Casos Sin Asignar</h2>
+    <span class="badge bg-primary fs-6">{{ cases|length }} casos pendientes</span>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Cliente</th>
+                    <th>Plataforma</th>
+                    <th>Prestamo</th>
+                    <th>Esperando</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for case in cases %}
+                <tr>
+                    <td>
+                        <strong>{{ case.client.name|default:"Sin cliente" }}</strong><br>
+                        <small class="text-muted">{{ case.client.cedula|default:"" }}</small>
+                    </td>
+                    <td>{{ case.platform.name }}</td>
+                    <td>
+                        {% if case.loan %}
+                        {{ case.loan.currency }} {{ case.loan.amount }}<br>
+                        <small class="text-danger">{{ case.loan.days_overdue }} dias en atraso</small>
+                        {% else %}
+                        <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ case.created_at|timesince }}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" onclick="assignCase('{{ case.id }}')" {% if not lawyer.can_accept_new_case %}disabled{% endif %}>
+                            Tomar Caso
+                        </button>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted py-4">
+                        <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                        No hay casos pendientes en la cola
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% if not lawyer.can_accept_new_case %}
+<div class="alert alert-warning mt-4">
+    <i class="bi bi-exclamation-triangle me-2"></i>
+    {% if not lawyer.is_on_shift %}
+    No puedes tomar casos porque no estas en turno.
+    {% elif not lawyer.is_available %}
+    No puedes tomar casos porque no estas disponible.
+    {% else %}
+    Has alcanzado el limite maximo de casos simultaneos ({{ lawyer.max_concurrent_cases }}).
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function assignCase(caseId) {
+    fetch(`/lawyers/assign/${caseId}/`, {method: 'POST', headers: {'X-CSRFToken': '{{ csrf_token }}'}})
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = `/lawyers/conversations/${data.conversation_id}/`;
+        } else {
+            alert(data.error || 'Error al asignar caso');
+        }
+    });
+}
+</script>
+{% endblock %}

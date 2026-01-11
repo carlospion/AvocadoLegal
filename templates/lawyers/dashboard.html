@@ -1,0 +1,100 @@
+{% extends "lawyers/base.html" %}
+{% block title %}Dashboard - JCJ Consultings{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Dashboard</h2>
+    <span class="text-muted">Bienvenido, {{ lawyer.name }}</span>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card stat-card p-3">
+            <div class="stat-value">{{ active_cases }}</div>
+            <div class="stat-label">Casos Activos</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card p-3">
+            <div class="stat-value">{{ pending_cases }}</div>
+            <div class="stat-label">Pendientes de Respuesta</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card p-3">
+            <div class="stat-value">{{ resolved_today }}</div>
+            <div class="stat-label">Resueltos Hoy</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card p-3">
+            <div class="stat-value">{{ total_resolved }}</div>
+            <div class="stat-label">Total Resueltos</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Conversaciones Recientes</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    {% for conv in recent_conversations %}
+                    <a href="{% url 'lawyers:conversation_detail' conv.id %}" class="list-group-item list-group-item-action">
+                        <div class="d-flex justify-content-between">
+                            <strong>{{ conv.client.name|default:"Sin cliente" }}</strong>
+                            <small class="text-muted">{{ conv.updated_at|timesince }} atras</small>
+                        </div>
+                        <small class="text-muted">{{ conv.platform.name }} - {{ conv.get_status_display }}</small>
+                    </a>
+                    {% empty %}
+                    <div class="list-group-item text-muted">No hay conversaciones recientes</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-white d-flex justify-content-between">
+                <h5 class="mb-0">Casos Sin Asignar</h5>
+                <a href="{% url 'lawyers:queue' %}" class="btn btn-sm btn-outline-primary">Ver todos</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    {% for case in unassigned_cases %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ case.client.name|default:"Sin cliente" }}</strong><br>
+                            <small class="text-muted">{{ case.platform.name }} - {{ case.created_at|timesince }} atras</small>
+                        </div>
+                        <button class="btn btn-sm btn-primary" onclick="assignCase('{{ case.id }}')">Tomar</button>
+                    </div>
+                    {% empty %}
+                    <div class="list-group-item text-muted">No hay casos pendientes</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function assignCase(caseId) {
+    fetch(`/lawyers/assign/${caseId}/`, {method: 'POST', headers: {'X-CSRFToken': '{{ csrf_token }}'}})
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = `/lawyers/conversations/${data.conversation_id}/`;
+        } else {
+            alert(data.error || 'Error al asignar caso');
+        }
+    });
+}
+</script>
+{% endblock %}

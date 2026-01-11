@@ -1,0 +1,125 @@
+{% extends "lawyers/base.html" %}
+{% block title %}Caso - {{ conversation.client.name }} - JCJ Consultings{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <a href="{% url 'lawyers:conversation_list' %}" class="text-decoration-none"><i class="bi bi-arrow-left"></i> Volver</a>
+        <h2 class="mt-2">{{ conversation.client.name|default:"Sin cliente" }}</h2>
+        <span class="status-badge status-{{ conversation.status }}">{{ conversation.get_status_display }}</span>
+    </div>
+    <div>
+        {% if conversation.status != 'closed' %}
+        <button class="btn btn-outline-danger" onclick="closeCase()">Cerrar Caso</button>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card chat-container">
+            <div class="card-header bg-white">Chat</div>
+            <div class="chat-messages" id="chatMessages">
+                {% for msg in messages %}
+                <div class="chat-message {{ msg.sender_type }}">
+                    <div class="bubble">
+                        <small class="d-block text-muted mb-1">{{ msg.sender_name }}</small>
+                        {{ msg.content }}
+                    </div>
+                    <small class="text-muted">{{ msg.sent_at|time:"H:i" }}</small>
+                </div>
+                {% empty %}
+                <div class="text-center text-muted py-4">No hay mensajes</div>
+                {% endfor %}
+            </div>
+            {% if conversation.status != 'closed' %}
+            <div class="chat-input">
+                <form id="messageForm" class="d-flex gap-2">
+                    <input type="text" class="form-control" id="messageInput" placeholder="Escribe tu respuesta..." autocomplete="off">
+                    <button type="submit" class="btn btn-primary">Enviar</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-header bg-white">Informacion del Cliente</div>
+            <div class="card-body">
+                <p><strong>Nombre:</strong> {{ conversation.client.name|default:"N/A" }}</p>
+                <p><strong>Cedula:</strong> {{ conversation.client.cedula|default:"N/A" }}</p>
+                <p><strong>Telefono:</strong> {{ conversation.client.phone|default:"N/A" }}</p>
+                <p><strong>Email:</strong> {{ conversation.client.email|default:"N/A" }}</p>
+            </div>
+        </div>
+        {% if conversation.loan %}
+        <div class="card mb-3">
+            <div class="card-header bg-white">Informacion del Prestamo</div>
+            <div class="card-body">
+                <p><strong>Monto:</strong> {{ conversation.loan.currency }} {{ conversation.loan.amount }}</p>
+                <p><strong>Balance:</strong> {{ conversation.loan.currency }} {{ conversation.loan.balance }}</p>
+                <p><strong>Estado:</strong> {{ conversation.loan.get_status_display }}</p>
+                <p><strong>Dias en Atraso:</strong> {{ conversation.loan.days_overdue }}</p>
+            </div>
+        </div>
+        {% endif %}
+        <div class="card">
+            <div class="card-header bg-white">Informacion del Caso</div>
+            <div class="card-body">
+                <p><strong>Plataforma:</strong> {{ conversation.platform.name }}</p>
+                <p><strong>Creado:</strong> {{ conversation.created_at|date:"d/m/Y H:i" }}</p>
+                <p><strong>Asunto:</strong> {{ conversation.subject|default:"No especificado" }}</p>
+                {% if conversation.closed_at %}
+                <p><strong>Cerrado:</strong> {{ conversation.closed_at|date:"d/m/Y H:i" }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('messageForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const input = document.getElementById('messageInput');
+    const content = input.value.trim();
+    if (!content) return;
+    
+    fetch('{% url "lawyers:send_message" conversation.id %}', {
+        method: 'POST',
+        headers: {'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/x-www-form-urlencoded'},
+        body: 'content=' + encodeURIComponent(content)
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            const msg = data.message;
+            const div = document.createElement('div');
+            div.className = 'chat-message lawyer';
+            div.innerHTML = `<div class="bubble"><small class="d-block text-muted mb-1">${msg.sender_name}</small>${msg.content}</div><small class="text-muted">${new Date(msg.sent_at).toLocaleTimeString('es-DO', {hour: '2-digit', minute:'2-digit'})}</small>`;
+            document.getElementById('chatMessages').appendChild(div);
+            document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+            input.value = '';
+        }
+    });
+});
+
+function closeCase() {
+    if (!confirm('Estas seguro de cerrar este caso?')) return;
+    const notes = prompt('Notas de resolucion (opcional):');
+    fetch('{% url "lawyers:close_case" conversation.id %}', {
+        method: 'POST',
+        headers: {'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/x-www-form-urlencoded'},
+        body: 'notes=' + encodeURIComponent(notes || '')
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) location.reload();
+    });
+}
+
+// Scroll to bottom on load
+document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+</script>
+{% endblock %}

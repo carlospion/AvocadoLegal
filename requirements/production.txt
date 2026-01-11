@@ -1,0 +1,6 @@
+﻿-r base.txt
+
+# Production
+gunicorn==23.0.0
+whitenoise==6.9.0
+sentry-sdk==2.33.0
