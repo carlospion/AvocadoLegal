@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AvocadoLegal Widget</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: transparent;
+        }
+
+        #widget-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 999999;
+        }
+
+        #chat-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2d5016, #4a7c23);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #chat-btn svg {
+            fill: white;
+            width: 28px;
+            height: 28px;
+        }
+
+        #chat-btn:hover {
+            transform: scale(1.05);
+        }
+
+        #alert-box {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            padding: 16px;
+            width: 280px;
+            display: none;
+        }
+
+        #alert-box.show {
+            display: block;
+        }
+
+        #alert-box h4 {
+            margin: 0 0 8px;
+            color: #2d5016;
+            font-size: 14px;
+        }
+
+        #alert-box p {
+            margin: 0 0 12px;
+            color: #555;
+            font-size: 13px;
+        }
+
+        .alert-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .alert-btns button {
+            flex: 1;
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .btn-yes {
+            background: #4a7c23;
+            color: white;
+            border: none;
+        }
+
+        .btn-no {
+            background: white;
+            color: #666;
+            border: 1px solid #ddd;
+        }
+
+        #chat-window {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            width: 340px;
+            height: 480px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #chat-window.open {
+            display: flex;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #2d5016, #4a7c23);
+            color: white;
+            padding: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h3 {
+            margin: 0;
+            font-size: 15px;
+        }
+
+        .chat-header button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        #status {
+            padding: 8px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            background: #f0f0f0;
+        }
+
+        #messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            background: #f7fafc;
+        }
+
+        .msg {
+            margin-bottom: 10px;
+            max-width: 75%;
+        }
+
+        .msg.system,
+        .msg.lawyer {
+            margin-right: auto;
+        }
+
+        .msg.platform_user {
+            margin-left: auto;
+        }
+
+        .bubble {
+            padding: 10px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+        }
+
+        .msg.system .bubble,
+        .msg.lawyer .bubble {
+            background: white;
+        }
+
+        .msg.platform_user .bubble {
+            background: #4a7c23;
+            color: white;
+        }
+
+        .msg-time {
+            font-size: 10px;
+            color: #999;
+            margin-top: 3px;
+        }
+
+        .chat-input {
+            padding: 10px;
+            background: white;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+
+        .chat-input button {
+            padding: 10px 14px;
+            background: #4a7c23;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="widget-container">
+        <div id="alert-box">
+            <h4>🥑 Irregularidad Detectada</h4>
+            <p>¿Deseas consultar con nuestros Abogados?</p>
+            <div class="alert-btns">
+                <button class="btn-yes" onclick="startChat()">Sí, consultar</button>
+                <button class="btn-no" onclick="hideAlert()">No</button>
+            </div>
+        </div>
+
+        <div id="chat-window">
+            <div class="chat-header">
+                <h3>🥑 AvocadoLegal</h3>
+                <button onclick="closeChat()">&times;</button>
+            </div>
+            <div id="status"></div>
+            <div id="messages"></div>
+            <div class="chat-input">
+                <input type="text" id="msg-input" placeholder="Escribe tu mensaje..."
+                    onkeypress="if(event.key==='Enter')sendMessage()">
+                <button onclick="sendMessage()">Enviar</button>
+            </div>
+        </div>
+
+        <button id="chat-btn" onclick="toggleChat()">
+            <svg viewBox="0 0 24 24">
+                <path
+                    d="M12 3c5.5 0 10 3.58 10 8s-4.5 8-10 8c-1.24 0-2.43-.18-3.53-.5C5.55 21 2 21 2 21c2.33-2.33 2.7-3.9 2.75-4.5C3.05 15.07 2 13.13 2 11c0-4.42 4.5-8 10-8z" />
+            </svg>
+        </button>
+    </div>
+
+    <script>
+        // Get config from URL params
+        const params = new URLSearchParams(window.location.search);
+        const API_KEY = params.get('api_key') || '';
+        const API_URL = params.get('api_url') || window.location.origin + '/api/v1';
+        const POLL_INTERVAL = 5000;
+
+        let state = {
+            isOpen: false,
+            conversationId: null,
+            polling: null
+        };
+
+        function setStatus(msg) {
+            document.getElementById('status').textContent = msg || '';
+        }
+
+        function showAlert() {
+            document.getElementById('alert-box').classList.add('show');
+        }
+
+        function hideAlert() {
+            document.getElementById('alert-box').classList.remove('show');
+        }
+
+        function toggleChat() {
+            state.isOpen ? closeChat() : openChat();
+        }
+
+        function openChat() {
+            state.isOpen = true;
+            document.getElementById('chat-window').classList.add('open');
+            hideAlert();
+            if (!state.conversationId) {
+                createConversation();
+            }
+        }
+
+        function closeChat() {
+            state.isOpen = false;
+            document.getElementById('chat-window').classList.remove('open');
+            if (state.polling) {
+                clearInterval(state.polling);
+                state.polling = null;
+            }
+        }
+
+        function startChat() {
+            hideAlert();
+            openChat();
+        }
+
+        async function api(endpoint, method = 'GET', data = null) {
+            const opts = {
+                method,
+                headers: { 'Content-Type': 'application/json' }
+            };
+            if (API_KEY) opts.headers['Authorization'] = 'Api-Key ' + API_KEY;
+            if (data) opts.body = JSON.stringify(data);
+
+            const res = await fetch(API_URL + endpoint, opts);
+            const json = await res.json();
+            if (!res.ok) throw new Error('Status ' + res.status);
+            return json;
+        }
+
+        async function createConversation() {
+            if (state.conversationId) return;
+            setStatus('Conectando...');
+
+            try {
+                const result = await api('/conversations/', 'POST', {
+                    subject: 'Consulta widget iframe'
+                });
+
+                if (result.id) {
+                    state.conversationId = result.id;
+                    console.log('[AvocadoLegal] Conversation created:', result.id);
+                    setStatus('Conectado');
+                    setTimeout(() => setStatus(''), 2000);
+                    loadMessages();
+                    state.polling = setInterval(loadMessages, POLL_INTERVAL);
+                }
+            } catch (err) {
+                console.error('[AvocadoLegal] Error:', err);
+                setStatus('Error. Reintentando...');
+                setTimeout(createConversation, 3000);
+            }
+        }
+
+        async function loadMessages() {
+            if (!state.conversationId) return;
+            try {
+                const msgs = await api('/conversations/' + state.conversationId + '/messages/');
+                renderMessages(msgs);
+            } catch (err) {
+                console.error('[AvocadoLegal] Load error:', err);
+            }
+        }
+
+        function renderMessages(msgs) {
+            const container = document.getElementById('messages');
+            container.innerHTML = msgs.map(m => `
+                <div class="msg ${m.sender_type}">
+                    <div class="bubble">${m.content}</div>
+                    <div class="msg-time">${m.sender_name} - ${new Date(m.sent_at).toLocaleTimeString()}</div>
+                </div>
+            `).join('');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('msg-input');
+            const content = input.value.trim();
+            if (!content || !state.conversationId) return;
+            input.value = '';
+
+            try {
+                await api('/conversations/' + state.conversationId + '/send_message/', 'POST', {
+                    content,
+                    sender_type: 'platform_user',
+                    sender_name: 'Usuario'
+                });
+                loadMessages();
+            } catch (err) {
+                setStatus('Error al enviar');
+            }
+        }
+
+        // Auto-show alert after 2 seconds
+        setTimeout(showAlert, 2000);
+
+        // Notify parent window of ready state
+        if (window.parent !== window) {
+            window.parent.postMessage({ type: 'avocadolegal-ready' }, '*');
+        }
+    </script>
+</body>
+
+</html>

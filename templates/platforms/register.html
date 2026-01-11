@@ -318,6 +318,15 @@
                     </button>
                 </div>
 
+                <hr class="my-4">
+
+                <label class="form-label">Opción Alternativa (para plataformas con CSP restrictiva):</label>
+                <p class="text-muted small">Si el código anterior no funciona, usa este iframe:</p>
+                <div class="integration-code" id="iframeCode"></div>
+                <button class="copy-btn w-100 mt-2" onclick="copyIframe()">
+                    <i class="bi bi-clipboard me-1"></i>Copiar Código Iframe
+                </button>
+
                 <div class="alert alert-warning mt-4 mb-0">
                     <i class="bi bi-exclamation-triangle me-2"></i>
                     <strong>¡Importante!</strong> Guarda tu API Key en un lugar seguro. No podrás verla de nuevo.
@@ -406,15 +415,26 @@
                     generatedApiKey = result.api_key;
                     document.getElementById('apiKeyValue').textContent = result.api_key;
 
-                    const widgetUrl = window.location.origin + '/static/widget/jcj-legal-chat.js';
+                    const widgetUrl = 'https://cdn.jsdelivr.net/gh/carlospion/AvocadoLegal@main/static/widget/jcj-legal-chat.js';
                     const apiUrl = window.location.origin + '/api/v1';
                     const code = `<script 
     src="${widgetUrl}" 
     data-api-key="${result.api_key}"
     data-api-url="${apiUrl}"
     data-position="right">
-<\/script>`;
+<\/script>
+
+<!-- NOTA: Para producción, cambia data-api-url a tu dominio real -->`;
                     document.getElementById('integrationCode').textContent = code;
+
+                    // Generate iframe code
+                    const iframeUrl = window.location.origin + '/widget/embed/?api_key=' + result.api_key + '&api_url=' + encodeURIComponent(apiUrl);
+                    const iframeCode = `<iframe 
+    src="${iframeUrl}"
+    style="border:none; position:fixed; bottom:0; right:0; width:400px; height:550px; z-index:999999;"
+    allow="clipboard-write">
+</iframe>`;
+                    document.getElementById('iframeCode').textContent = iframeCode;
 
                     document.getElementById('registerForm').style.display = 'none';
                     document.getElementById('result').classList.add('show');
@@ -439,6 +459,13 @@
             const code = document.getElementById('integrationCode').textContent;
             navigator.clipboard.writeText(code).then(() => {
                 showCopyFeedback('Código copiado!');
+            });
+        }
+
+        function copyIframe() {
+            const code = document.getElementById('iframeCode').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                showCopyFeedback('Código iframe copiado!');
             });
         }
 

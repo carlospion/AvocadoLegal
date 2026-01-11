@@ -14,6 +14,7 @@ urlpatterns = [
     path('lawyers/', include('apps.lawyers.urls')),
     path('demo/', TemplateView.as_view(template_name='demo.html'), name='demo'),
     path('platforms/register/', TemplateView.as_view(template_name='platforms/register.html'), name='platform_register'),
+    path('widget/embed/', TemplateView.as_view(template_name='widget/embed.html'), name='widget_embed'),
 ]
 
 if settings.DEBUG:
