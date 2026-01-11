@@ -383,7 +383,8 @@
                     </div>
                     <p class="small text-muted mb-0"><strong>Importante:</strong> Reemplaza
                         <code>TU-DOMINIO-API.com</code> con el dominio real de la API (ej:
-                        <code>https://api.avocadolegal.com</code> o tu URL de ngrok).</p>
+                        <code>https://api.avocadolegal.com</code> o tu URL de ngrok).
+                    </p>
 
                     <div class="alert alert-success mb-0 mt-3">
                         <i class="bi bi-lightbulb me-2"></i>
@@ -432,25 +433,38 @@
                     generatedApiKey = result.api_key;
                     document.getElementById('apiKeyValue').textContent = result.api_key;
 
-                    const widgetUrl = 'https://cdn.jsdelivr.net/gh/carlospion/AvocadoLegal@main/static/widget/jcj-legal-chat.js';
-                    const apiUrl = window.location.origin + '/api/v1';
+                    const loaderUrl = 'https://cdn.jsdelivr.net/gh/carlospion/AvocadoLegal@main/static/widget/avocado-loader.js';
+                    const baseUrl = window.location.origin;
                     const code = `<script 
-    src="${widgetUrl}" 
+    src="${loaderUrl}" 
     data-api-key="${result.api_key}"
-    data-api-url="${apiUrl}"
+    data-base-url="${baseUrl}"
     data-position="right">
 <\/script>
 
-<!-- NOTA: Para producción, cambia data-api-url a tu dominio real -->`;
+<!-- Para producción, cambia data-base-url a tu dominio de AvocadoLegal -->`;
                     document.getElementById('integrationCode').textContent = code;
 
-                    // Generate iframe code
-                    const iframeUrl = window.location.origin + '/widget/embed/?api_key=' + result.api_key + '&api_url=' + encodeURIComponent(apiUrl);
-                    const iframeCode = `<iframe 
+                    // Generate direct iframe code (alternative)
+                    const iframeUrl = baseUrl + '/widget/embed/?api_key=' + result.api_key;
+                    const iframeCode = `<!-- Opción alternativa: iframe directo -->
+<iframe 
     src="${iframeUrl}"
-    style="border:none; position:fixed; bottom:0; right:0; width:400px; height:550px; z-index:999999;"
-    allow="clipboard-write">
-</iframe>`;
+    style="border:none; position:fixed; bottom:0; right:0; width:80px; height:80px; z-index:2147483647;"
+    allow="clipboard-write"
+    id="avocado-widget">
+</iframe>
+
+<script>
+// Escucha cambios de tamaño del widget
+window.addEventListener('message', function(e) {
+    if (e.data?.type === 'avocado-resize') {
+        var f = document.getElementById('avocado-widget');
+        f.style.width = e.data.width + 'px';
+        f.style.height = e.data.height + 'px';
+    }
+});
+<\/script>`;
                     document.getElementById('iframeCode').textContent = iframeCode;
 
                     document.getElementById('registerForm').style.display = 'none';

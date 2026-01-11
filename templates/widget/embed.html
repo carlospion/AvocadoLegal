@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AvocadoLegal Widget</title>
+    <title>AvocadoLegal Chat</title>
     <style>
         * {
             margin: 0;
@@ -12,29 +12,44 @@
             box-sizing: border-box;
         }
 
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background: transparent;
+        :root {
+            --avocado-dark: #2d5016;
+            --avocado-primary: #4a7c23;
+            --avocado-light: #6b9b37;
+            --avocado-cream: #f5f7e8;
         }
 
-        #widget-container {
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: transparent;
+            overflow: hidden;
+        }
+
+        #widget-root {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            z-index: 999999;
         }
 
+        /* Floating Button */
         #chat-btn {
             width: 60px;
             height: 60px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #2d5016, #4a7c23);
+            background: linear-gradient(135deg, var(--avocado-dark), var(--avocado-primary));
             border: none;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 20px rgba(45, 80, 22, 0.4);
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        #chat-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 6px 25px rgba(45, 80, 22, 0.5);
         }
 
         #chat-btn svg {
@@ -43,121 +58,153 @@
             height: 28px;
         }
 
-        #chat-btn:hover {
-            transform: scale(1.05);
-        }
-
-        #alert-box {
-            position: absolute;
-            bottom: 70px;
-            right: 0;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            padding: 16px;
-            width: 280px;
+        #chat-btn .close-icon {
             display: none;
         }
 
-        #alert-box.show {
+        #chat-btn.open .chat-icon {
+            display: none;
+        }
+
+        #chat-btn.open .close-icon {
             display: block;
         }
 
-        #alert-box h4 {
-            margin: 0 0 8px;
-            color: #2d5016;
-            font-size: 14px;
-        }
-
-        #alert-box p {
-            margin: 0 0 12px;
-            color: #555;
-            font-size: 13px;
-        }
-
-        .alert-btns {
-            display: flex;
-            gap: 8px;
-        }
-
-        .alert-btns button {
-            flex: 1;
-            padding: 8px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 13px;
-        }
-
-        .btn-yes {
-            background: #4a7c23;
+        /* Notification Badge */
+        .badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background: #e53935;
             color: white;
-            border: none;
+            font-size: 11px;
+            font-weight: bold;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
         }
 
-        .btn-no {
-            background: white;
-            color: #666;
-            border: 1px solid #ddd;
+        .badge.show {
+            display: flex;
         }
 
+        /* Chat Window */
         #chat-window {
             position: absolute;
-            bottom: 70px;
+            bottom: 75px;
             right: 0;
-            width: 340px;
-            height: 480px;
+            width: 360px;
+            height: 520px;
             background: white;
             border-radius: 16px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
             display: none;
             flex-direction: column;
             overflow: hidden;
+            animation: slideUp 0.3s ease;
         }
 
         #chat-window.open {
             display: flex;
         }
 
-        .chat-header {
-            background: linear-gradient(135deg, #2d5016, #4a7c23);
-            color: white;
-            padding: 14px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .chat-header h3 {
+        /* Header */
+        .chat-header {
+            background: linear-gradient(135deg, var(--avocado-dark), var(--avocado-primary));
+            color: white;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chat-header .avatar {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .chat-header .info h3 {
             margin: 0;
             font-size: 15px;
+            font-weight: 600;
         }
 
-        .chat-header button {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 20px;
-            cursor: pointer;
+        .chat-header .info p {
+            margin: 2px 0 0;
+            font-size: 12px;
+            opacity: 0.85;
         }
 
-        #status {
-            padding: 8px;
-            text-align: center;
+        .chat-header .info p.online::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #4ade80;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        /* Status Bar */
+        #status-bar {
+            padding: 8px 16px;
             font-size: 12px;
             color: #666;
-            background: #f0f0f0;
+            background: #f8f9fa;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            display: none;
         }
 
+        #status-bar.show {
+            display: block;
+        }
+
+        /* Messages Container */
         #messages {
             flex: 1;
             overflow-y: auto;
-            padding: 12px;
+            padding: 16px;
             background: #f7fafc;
         }
 
         .msg {
-            margin-bottom: 10px;
-            max-width: 75%;
+            margin-bottom: 12px;
+            max-width: 80%;
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .msg.system,
@@ -170,29 +217,54 @@
         }
 
         .bubble {
-            padding: 10px 12px;
-            border-radius: 12px;
-            font-size: 13px;
+            padding: 10px 14px;
+            border-radius: 16px;
+            font-size: 14px;
+            line-height: 1.4;
+            word-wrap: break-word;
         }
 
         .msg.system .bubble,
         .msg.lawyer .bubble {
             background: white;
+            color: #333;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px 16px 16px 4px;
         }
 
         .msg.platform_user .bubble {
-            background: #4a7c23;
+            background: var(--avocado-primary);
             color: white;
+            border-radius: 16px 16px 4px 16px;
         }
 
-        .msg-time {
+        .msg-meta {
             font-size: 10px;
             color: #999;
-            margin-top: 3px;
+            margin-top: 4px;
+            padding: 0 4px;
         }
 
+        .msg.platform_user .msg-meta {
+            text-align: right;
+        }
+
+        /* Typing Indicator */
+        .typing {
+            display: none;
+            padding: 12px;
+            color: #666;
+            font-size: 13px;
+            font-style: italic;
+        }
+
+        .typing.show {
+            display: block;
+        }
+
+        /* Input Area */
         .chat-input {
-            padding: 10px;
+            padding: 12px;
             background: white;
             border-top: 1px solid #eee;
             display: flex;
@@ -201,172 +273,318 @@
 
         .chat-input input {
             flex: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 13px;
+            padding: 12px 16px;
+            border: 1px solid #e5e7eb;
+            border-radius: 24px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .chat-input input:focus {
+            border-color: var(--avocado-primary);
         }
 
         .chat-input button {
-            padding: 10px 14px;
-            background: #4a7c23;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--avocado-primary);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .chat-input button:hover {
+            background: var(--avocado-dark);
+        }
+
+        .chat-input button svg {
+            fill: white;
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Welcome Screen */
+        #welcome-screen {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            text-align: center;
+            background: var(--avocado-cream);
+        }
+
+        #welcome-screen .emoji {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        #welcome-screen h4 {
+            color: var(--avocado-dark);
+            margin-bottom: 8px;
+            font-size: 18px;
+        }
+
+        #welcome-screen p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        #welcome-screen button {
+            background: var(--avocado-primary);
             color: white;
             border: none;
-            border-radius: 8px;
+            padding: 12px 24px;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: 600;
             cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        #welcome-screen button:hover {
+            background: var(--avocado-dark);
+            transform: translateY(-2px);
+        }
+
+        .hidden {
+            display: none !important;
         }
     </style>
 </head>
 
 <body>
-    <div id="widget-container">
-        <div id="alert-box">
-            <h4>🥑 Irregularidad Detectada</h4>
-            <p>¿Deseas consultar con nuestros Abogados?</p>
-            <div class="alert-btns">
-                <button class="btn-yes" onclick="startChat()">Sí, consultar</button>
-                <button class="btn-no" onclick="hideAlert()">No</button>
-            </div>
-        </div>
-
+    <div id="widget-root">
         <div id="chat-window">
             <div class="chat-header">
-                <h3>🥑 AvocadoLegal</h3>
-                <button onclick="closeChat()">&times;</button>
+                <div class="avatar">🥑</div>
+                <div class="info">
+                    <h3>AvocadoLegal</h3>
+                    <p class="online">Asistencia Legal Online</p>
+                </div>
             </div>
-            <div id="status"></div>
-            <div id="messages"></div>
-            <div class="chat-input">
+
+            <div id="status-bar"></div>
+
+            <div id="welcome-screen">
+                <div class="emoji">👋</div>
+                <h4>¡Hola! Estamos aquí para ayudarte</h4>
+                <p>Nuestros abogados están listos para asistirte con cualquier consulta sobre tu situación financiera.
+                </p>
+                <button onclick="startConversation()">Iniciar Consulta</button>
+            </div>
+
+            <div id="messages" class="hidden"></div>
+            <div class="typing" id="typing">El abogado está escribiendo...</div>
+
+            <div class="chat-input hidden" id="input-area">
                 <input type="text" id="msg-input" placeholder="Escribe tu mensaje..."
                     onkeypress="if(event.key==='Enter')sendMessage()">
-                <button onclick="sendMessage()">Enviar</button>
+                <button onclick="sendMessage()">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                    </svg>
+                </button>
             </div>
         </div>
 
         <button id="chat-btn" onclick="toggleChat()">
-            <svg viewBox="0 0 24 24">
+            <span class="badge" id="badge">0</span>
+            <svg class="chat-icon" viewBox="0 0 24 24">
                 <path
                     d="M12 3c5.5 0 10 3.58 10 8s-4.5 8-10 8c-1.24 0-2.43-.18-3.53-.5C5.55 21 2 21 2 21c2.33-2.33 2.7-3.9 2.75-4.5C3.05 15.07 2 13.13 2 11c0-4.42 4.5-8 10-8z" />
+            </svg>
+            <svg class="close-icon" viewBox="0 0 24 24">
+                <path
+                    d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
             </svg>
         </button>
     </div>
 
     <script>
-        // Get config from URL params
+        // Configuration from URL params
         const params = new URLSearchParams(window.location.search);
-        const API_KEY = params.get('api_key') || '';
-        const API_URL = params.get('api_url') || window.location.origin + '/api/v1';
-        const POLL_INTERVAL = 5000;
-
-        let state = {
-            isOpen: false,
-            conversationId: null,
-            polling: null
+        const CONFIG = {
+            apiKey: params.get('api_key') || '',
+            apiUrl: params.get('api_url') || window.location.origin + '/api/v1',
+            position: params.get('position') || 'right',
+            pollInterval: 5000
         };
 
-        function setStatus(msg) {
-            document.getElementById('status').textContent = msg || '';
+        // State
+        const state = {
+            isOpen: false,
+            conversationId: null,
+            polling: null,
+            lastMessageCount: 0
+        };
+
+        // Notify parent window about size changes
+        function notifyResize(width, height) {
+            if (window.parent !== window) {
+                window.parent.postMessage({ type: 'avocado-resize', width, height }, '*');
+            }
         }
 
-        function showAlert() {
-            document.getElementById('alert-box').classList.add('show');
-        }
-
-        function hideAlert() {
-            document.getElementById('alert-box').classList.remove('show');
-        }
-
+        // Toggle chat
         function toggleChat() {
-            state.isOpen ? closeChat() : openChat();
-        }
+            state.isOpen = !state.isOpen;
+            const chatWindow = document.getElementById('chat-window');
+            const chatBtn = document.getElementById('chat-btn');
 
-        function openChat() {
-            state.isOpen = true;
-            document.getElementById('chat-window').classList.add('open');
-            hideAlert();
-            if (!state.conversationId) {
-                createConversation();
+            if (state.isOpen) {
+                chatWindow.classList.add('open');
+                chatBtn.classList.add('open');
+                notifyResize(400, 620);
+                document.getElementById('badge').classList.remove('show');
+            } else {
+                chatWindow.classList.remove('open');
+                chatBtn.classList.remove('open');
+                notifyResize(80, 80);
             }
         }
 
-        function closeChat() {
-            state.isOpen = false;
-            document.getElementById('chat-window').classList.remove('open');
-            if (state.polling) {
-                clearInterval(state.polling);
-                state.polling = null;
+        // Show status
+        function setStatus(msg) {
+            const bar = document.getElementById('status-bar');
+            if (msg) {
+                bar.textContent = msg;
+                bar.classList.add('show');
+            } else {
+                bar.classList.remove('show');
             }
         }
 
-        function startChat() {
-            hideAlert();
-            openChat();
-        }
-
+        // API helper
         async function api(endpoint, method = 'GET', data = null) {
             const opts = {
                 method,
                 headers: { 'Content-Type': 'application/json' }
             };
-            if (API_KEY) opts.headers['Authorization'] = 'Api-Key ' + API_KEY;
+            if (CONFIG.apiKey) {
+                opts.headers['Authorization'] = 'Api-Key ' + CONFIG.apiKey;
+            }
             if (data) opts.body = JSON.stringify(data);
 
-            const res = await fetch(API_URL + endpoint, opts);
-            const json = await res.json();
-            if (!res.ok) throw new Error('Status ' + res.status);
-            return json;
+            const res = await fetch(CONFIG.apiUrl + endpoint, opts);
+            if (!res.ok) throw new Error('API Error: ' + res.status);
+            return res.json();
         }
 
-        async function createConversation() {
-            if (state.conversationId) return;
+        // Start conversation
+        async function startConversation() {
             setStatus('Conectando...');
 
             try {
                 const result = await api('/conversations/', 'POST', {
-                    subject: 'Consulta widget iframe'
+                    subject: 'Consulta Legal Widget'
                 });
 
                 if (result.id) {
                     state.conversationId = result.id;
-                    console.log('[AvocadoLegal] Conversation created:', result.id);
-                    setStatus('Conectado');
-                    setTimeout(() => setStatus(''), 2000);
+                    console.log('[AvocadoLegal] Conversation:', result.id);
+
+                    // Show chat interface
+                    document.getElementById('welcome-screen').classList.add('hidden');
+                    document.getElementById('messages').classList.remove('hidden');
+                    document.getElementById('input-area').classList.remove('hidden');
+
+                    setStatus('');
+
+                    // Add welcome message
+                    addMessage({
+                        sender_type: 'system',
+                        sender_name: 'AvocadoLegal',
+                        content: '¡Bienvenido! Un abogado se conectará contigo en breve. Mientras tanto, puedes describirnos tu situación.',
+                        sent_at: new Date().toISOString()
+                    });
+
+                    // Start polling
                     loadMessages();
-                    state.polling = setInterval(loadMessages, POLL_INTERVAL);
+                    state.polling = setInterval(loadMessages, CONFIG.pollInterval);
                 }
             } catch (err) {
                 console.error('[AvocadoLegal] Error:', err);
-                setStatus('Error. Reintentando...');
-                setTimeout(createConversation, 3000);
+                setStatus('Error de conexión. Reintentando...');
+                setTimeout(startConversation, 3000);
             }
         }
 
+        // Load messages
         async function loadMessages() {
             if (!state.conversationId) return;
+
             try {
                 const msgs = await api('/conversations/' + state.conversationId + '/messages/');
                 renderMessages(msgs);
+
+                // Check for new messages when closed
+                if (!state.isOpen && msgs.length > state.lastMessageCount) {
+                    const badge = document.getElementById('badge');
+                    badge.textContent = msgs.length - state.lastMessageCount;
+                    badge.classList.add('show');
+                }
+
+                if (state.isOpen) {
+                    state.lastMessageCount = msgs.length;
+                }
             } catch (err) {
-                console.error('[AvocadoLegal] Load error:', err);
+                console.error('[AvocadoLegal] Poll error:', err);
             }
         }
 
+        // Render messages
         function renderMessages(msgs) {
             const container = document.getElementById('messages');
+            const wasAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 50;
+
             container.innerHTML = msgs.map(m => `
                 <div class="msg ${m.sender_type}">
-                    <div class="bubble">${m.content}</div>
-                    <div class="msg-time">${m.sender_name} - ${new Date(m.sent_at).toLocaleTimeString()}</div>
+                    <div class="bubble">${escapeHtml(m.content)}</div>
+                    <div class="msg-meta">${m.sender_name} · ${formatTime(m.sent_at)}</div>
                 </div>
             `).join('');
+
+            if (wasAtBottom) {
+                container.scrollTop = container.scrollHeight;
+            }
+        }
+
+        // Add single message
+        function addMessage(msg) {
+            const container = document.getElementById('messages');
+            container.innerHTML += `
+                <div class="msg ${msg.sender_type}">
+                    <div class="bubble">${escapeHtml(msg.content)}</div>
+                    <div class="msg-meta">${msg.sender_name} · ${formatTime(msg.sent_at)}</div>
+                </div>
+            `;
             container.scrollTop = container.scrollHeight;
         }
 
+        // Send message
         async function sendMessage() {
             const input = document.getElementById('msg-input');
             const content = input.value.trim();
             if (!content || !state.conversationId) return;
+
             input.value = '';
+
+            // Optimistic UI update
+            addMessage({
+                sender_type: 'platform_user',
+                sender_name: 'Tú',
+                content: content,
+                sent_at: new Date().toISOString()
+            });
 
             try {
                 await api('/conversations/' + state.conversationId + '/send_message/', 'POST', {
@@ -374,19 +592,25 @@
                     sender_type: 'platform_user',
                     sender_name: 'Usuario'
                 });
-                loadMessages();
             } catch (err) {
                 setStatus('Error al enviar');
+                setTimeout(() => setStatus(''), 2000);
             }
         }
 
-        // Auto-show alert after 2 seconds
-        setTimeout(showAlert, 2000);
-
-        // Notify parent window of ready state
-        if (window.parent !== window) {
-            window.parent.postMessage({ type: 'avocadolegal-ready' }, '*');
+        // Utilities
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
+
+        function formatTime(isoString) {
+            return new Date(isoString).toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        // Initialize - notify parent of initial size
+        notifyResize(80, 80);
     </script>
 </body>
 
