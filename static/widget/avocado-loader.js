@@ -58,8 +58,8 @@
         position: fixed;
         bottom: 0;
         ${position}: 0;
-        width: 100px;
-        height: 100px;
+        width: 320px;
+        height: 240px;
         z-index: 2147483647;
         pointer-events: none;
         background: transparent !important;

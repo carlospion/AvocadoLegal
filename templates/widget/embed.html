@@ -31,7 +31,117 @@
             right: 20px;
         }
 
-        /* Floating Button */
+        /* Alert Balloon - Appears First */
+        #alert-balloon {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 300px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            padding: 20px;
+            animation: fadeInUp 0.4s ease;
+        }
+
+        #alert-balloon.hidden {
+            display: none;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #alert-balloon .header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        #alert-balloon .header .logo {
+            width: 40px;
+            height: 40px;
+            background: var(--jcj-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        #alert-balloon .header h4 {
+            color: var(--jcj-primary);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        #alert-balloon .header p {
+            color: #666;
+            font-size: 11px;
+        }
+
+        #alert-balloon .message {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            color: #856404;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        #alert-balloon .description {
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+
+        #alert-balloon .buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        #alert-balloon .btn {
+            flex: 1;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        #alert-balloon .btn-yes {
+            background: var(--jcj-accent);
+            color: white;
+        }
+
+        #alert-balloon .btn-yes:hover {
+            background: var(--jcj-primary);
+        }
+
+        #alert-balloon .btn-no {
+            background: #f1f1f1;
+            color: #666;
+        }
+
+        #alert-balloon .btn-no:hover {
+            background: #e5e5e5;
+        }
+
+        /* Floating Button - Hidden Initially */
         #chat-btn {
             width: 60px;
             height: 60px;
@@ -40,11 +150,15 @@
             border: none;
             cursor: pointer;
             box-shadow: 0 4px 20px rgba(30, 58, 95, 0.4);
-            display: flex;
+            display: none;
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
             position: relative;
+        }
+
+        #chat-btn.visible {
+            display: flex;
         }
 
         #chat-btn:hover {
@@ -70,7 +184,7 @@
             display: block;
         }
 
-        /* Notification Badge */
+        /* Badge */
         .badge {
             position: absolute;
             top: -2px;
@@ -97,7 +211,7 @@
             bottom: 75px;
             right: 0;
             width: 360px;
-            height: 520px;
+            height: 480px;
             background: white;
             border-radius: 16px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
@@ -127,50 +241,50 @@
         .chat-header {
             background: linear-gradient(135deg, var(--jcj-primary), var(--jcj-secondary));
             color: white;
-            padding: 16px;
+            padding: 14px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         .chat-header .avatar {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             background: rgba(255, 255, 255, 0.2);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 14px;
             font-weight: bold;
         }
 
         .chat-header .info h3 {
             margin: 0;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
         }
 
         .chat-header .info p {
             margin: 2px 0 0;
-            font-size: 12px;
+            font-size: 11px;
             opacity: 0.85;
         }
 
         .chat-header .info p.online::before {
             content: '';
             display: inline-block;
-            width: 8px;
-            height: 8px;
+            width: 7px;
+            height: 7px;
             background: #4ade80;
             border-radius: 50%;
-            margin-right: 5px;
+            margin-right: 4px;
         }
 
         /* Status Bar */
         #status-bar {
-            padding: 8px 16px;
-            font-size: 12px;
+            padding: 6px 14px;
+            font-size: 11px;
             color: #666;
             background: #f8f9fa;
             text-align: center;
@@ -182,16 +296,16 @@
             display: block;
         }
 
-        /* Messages Container */
+        /* Messages */
         #messages {
             flex: 1;
             overflow-y: auto;
-            padding: 16px;
+            padding: 14px;
             background: #f7fafc;
         }
 
         .msg {
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             max-width: 80%;
             animation: fadeIn 0.2s ease;
         }
@@ -218,9 +332,9 @@
         }
 
         .bubble {
-            padding: 10px 14px;
-            border-radius: 16px;
-            font-size: 14px;
+            padding: 9px 12px;
+            border-radius: 14px;
+            font-size: 13px;
             line-height: 1.4;
             word-wrap: break-word;
         }
@@ -230,19 +344,19 @@
             background: white;
             color: #333;
             border: 1px solid #e5e7eb;
-            border-radius: 16px 16px 16px 4px;
+            border-radius: 14px 14px 14px 4px;
         }
 
         .msg.platform_user .bubble {
             background: var(--jcj-accent);
             color: white;
-            border-radius: 16px 16px 4px 16px;
+            border-radius: 14px 14px 4px 14px;
         }
 
         .msg-meta {
             font-size: 10px;
             color: #999;
-            margin-top: 4px;
+            margin-top: 3px;
             padding: 0 4px;
         }
 
@@ -250,22 +364,9 @@
             text-align: right;
         }
 
-        /* Typing Indicator */
-        .typing {
-            display: none;
-            padding: 12px;
-            color: #666;
-            font-size: 13px;
-            font-style: italic;
-        }
-
-        .typing.show {
-            display: block;
-        }
-
         /* Input Area */
         .chat-input {
-            padding: 12px;
+            padding: 10px;
             background: white;
             border-top: 1px solid #eee;
             display: flex;
@@ -274,12 +375,11 @@
 
         .chat-input input {
             flex: 1;
-            padding: 12px 16px;
+            padding: 10px 14px;
             border: 1px solid #e5e7eb;
-            border-radius: 24px;
-            font-size: 14px;
+            border-radius: 20px;
+            font-size: 13px;
             outline: none;
-            transition: border-color 0.2s;
         }
 
         .chat-input input:focus {
@@ -287,8 +387,8 @@
         }
 
         .chat-input button {
-            width: 44px;
-            height: 44px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             background: var(--jcj-accent);
             border: none;
@@ -296,7 +396,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.2s;
         }
 
         .chat-input button:hover {
@@ -305,77 +404,36 @@
 
         .chat-input button svg {
             fill: white;
-            width: 20px;
-            height: 20px;
-        }
-
-        /* Welcome Screen */
-        #welcome-screen {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 30px;
-            text-align: center;
-            background: var(--jcj-light);
-        }
-
-        #welcome-screen .logo {
-            font-size: 32px;
-            font-weight: bold;
-            color: var(--jcj-primary);
-            margin-bottom: 16px;
-        }
-
-        #welcome-screen h4 {
-            color: var(--jcj-primary);
-            margin-bottom: 8px;
-            font-size: 18px;
-        }
-
-        #welcome-screen p {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 20px;
-            line-height: 1.5;
-        }
-
-        #welcome-screen .alert-msg {
-            background: #fff3cd;
-            border: 1px solid #ffc107;
-            color: #856404;
-            padding: 10px 14px;
-            border-radius: 8px;
-            font-size: 13px;
-            margin-bottom: 16px;
-        }
-
-        #welcome-screen button {
-            background: var(--jcj-accent);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 24px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        #welcome-screen button:hover {
-            background: var(--jcj-primary);
-            transform: translateY(-2px);
-        }
-
-        .hidden {
-            display: none !important;
+            width: 18px;
+            height: 18px;
         }
     </style>
 </head>
 
 <body>
     <div id="widget-root">
+        <!-- Alert Balloon - Appears First -->
+        <div id="alert-balloon">
+            <div class="header">
+                <div class="logo">⚖️</div>
+                <div>
+                    <h4>JCJ Consultings</h4>
+                    <p>Asistencia Legal</p>
+                </div>
+            </div>
+            <div class="message" id="detected-msg">
+                Hemos detectado posibles irregularidades en tu situación.
+            </div>
+            <div class="description">
+                ¿Deseas consultar con nuestros abogados sin compromiso?
+            </div>
+            <div class="buttons">
+                <button class="btn btn-yes" onclick="acceptConsultation()">Sí, consultar</button>
+                <button class="btn btn-no" onclick="declineConsultation()">No, gracias</button>
+            </div>
+        </div>
+
+        <!-- Chat Window -->
         <div id="chat-window">
             <div class="chat-header">
                 <div class="avatar">JCJ</div>
@@ -386,28 +444,9 @@
             </div>
 
             <div id="status-bar"></div>
+            <div id="messages"></div>
 
-            <div id="welcome-screen">
-                <div class="logo">⚖️</div>
-                <h4>Detectamos una irregularidad</h4>
-                <div class="alert-msg" id="detected-msg">
-                    Hemos detectado posibles irregularidades en tu situación financiera.
-                </div>
-                <p>Nuestros abogados pueden ayudarte a revisar tu caso sin compromiso.</p>
-                <label
-                    style="display:flex; align-items:flex-start; gap:8px; margin:12px 0; text-align:left; font-size:12px; color:#555; cursor:pointer;">
-                    <input type="checkbox" id="accept-terms" style="margin-top:2px;">
-                    <span>Acepto que mis datos sean enviados al equipo legal de JCJ Consultings para recibir
-                        asistencia.</span>
-                </label>
-                <button id="start-btn" onclick="startConversation()" disabled
-                    style="opacity:0.5; cursor:not-allowed;">Consultar Gratis</button>
-            </div>
-
-            <div id="messages" class="hidden"></div>
-            <div class="typing" id="typing">El abogado está escribiendo...</div>
-
-            <div class="chat-input hidden" id="input-area">
+            <div class="chat-input" id="input-area">
                 <input type="text" id="msg-input" placeholder="Escribe tu mensaje..."
                     onkeypress="if(event.key==='Enter')sendMessage()">
                 <button onclick="sendMessage()">
@@ -418,6 +457,7 @@
             </div>
         </div>
 
+        <!-- Chat Button - Hidden Initially -->
         <button id="chat-btn" onclick="toggleChat()">
             <span class="badge" id="badge">0</span>
             <svg class="chat-icon" viewBox="0 0 24 24">
@@ -432,38 +472,51 @@
     </div>
 
     <script>
-        // Configuration from URL params
         const params = new URLSearchParams(window.location.search);
         const CONFIG = {
             apiKey: params.get('api_key') || '',
             apiUrl: params.get('api_url') || window.location.origin + '/api/v1',
-            position: params.get('position') || 'right',
             detectedKeyword: params.get('keyword') || '',
             pollInterval: 5000
         };
 
-        // State
         const state = {
             isOpen: false,
             conversationId: null,
             polling: null,
-            lastMessageCount: 0
+            lastMessageCount: 0,
+            accepted: false
         };
 
         // Update detected message if keyword provided
         if (CONFIG.detectedKeyword) {
-            const alertMsg = document.getElementById('detected-msg');
-            alertMsg.innerHTML = `Detectamos términos como "<strong>${CONFIG.detectedKeyword}</strong>" que podrían indicar irregularidades en tu préstamo.`;
+            document.getElementById('detected-msg').innerHTML =
+                `Detectamos términos como "<strong>${CONFIG.detectedKeyword}</strong>" que podrían indicar irregularidades en tu préstamo.`;
         }
 
-        // Notify parent window about size changes
         function notifyResize(width, height) {
             if (window.parent !== window) {
                 window.parent.postMessage({ type: 'jcj-resize', width, height }, '*');
             }
         }
 
-        // Toggle chat
+        // User accepts consultation
+        function acceptConsultation() {
+            state.accepted = true;
+            document.getElementById('alert-balloon').classList.add('hidden');
+            document.getElementById('chat-btn').classList.add('visible');
+            notifyResize(100, 100);
+
+            // Auto-open chat
+            setTimeout(() => toggleChat(), 300);
+        }
+
+        // User declines
+        function declineConsultation() {
+            document.getElementById('alert-balloon').classList.add('hidden');
+            notifyResize(0, 0); // Hide widget completely
+        }
+
         function toggleChat() {
             state.isOpen = !state.isOpen;
             const chatWindow = document.getElementById('chat-window');
@@ -472,8 +525,13 @@
             if (state.isOpen) {
                 chatWindow.classList.add('open');
                 chatBtn.classList.add('open');
-                notifyResize(400, 620);
+                notifyResize(400, 580);
                 document.getElementById('badge').classList.remove('show');
+
+                // Start conversation on first open
+                if (!state.conversationId) {
+                    startConversation();
+                }
             } else {
                 chatWindow.classList.remove('open');
                 chatBtn.classList.remove('open');
@@ -481,26 +539,15 @@
             }
         }
 
-        // Show status
         function setStatus(msg) {
             const bar = document.getElementById('status-bar');
-            if (msg) {
-                bar.textContent = msg;
-                bar.classList.add('show');
-            } else {
-                bar.classList.remove('show');
-            }
+            if (msg) { bar.textContent = msg; bar.classList.add('show'); }
+            else { bar.classList.remove('show'); }
         }
 
-        // API helper
         async function api(endpoint, method = 'GET', data = null) {
-            const opts = {
-                method,
-                headers: { 'Content-Type': 'application/json' }
-            };
-            if (CONFIG.apiKey) {
-                opts.headers['Authorization'] = 'Api-Key ' + CONFIG.apiKey;
-            }
+            const opts = { method, headers: { 'Content-Type': 'application/json' } };
+            if (CONFIG.apiKey) opts.headers['Authorization'] = 'Api-Key ' + CONFIG.apiKey;
             if (data) opts.body = JSON.stringify(data);
 
             const res = await fetch(CONFIG.apiUrl + endpoint, opts);
@@ -508,86 +555,61 @@
             return res.json();
         }
 
-        // Start conversation
         async function startConversation() {
             setStatus('Conectando...');
 
             try {
                 const result = await api('/conversations/', 'POST', {
-                    subject: 'Consulta Legal - Irregularidad: ' + (CONFIG.detectedKeyword || 'detectada')
+                    subject: 'Consulta Legal - ' + (CONFIG.detectedKeyword || 'irregularidad detectada')
                 });
 
                 if (result.id) {
                     state.conversationId = result.id;
                     console.log('[JCJ] Conversation:', result.id);
-
-                    // Show chat interface
-                    document.getElementById('welcome-screen').classList.add('hidden');
-                    document.getElementById('messages').classList.remove('hidden');
-                    document.getElementById('input-area').classList.remove('hidden');
-
                     setStatus('');
 
-                    // Add welcome message
                     addMessage({
                         sender_type: 'system',
                         sender_name: 'JCJ Consultings',
-                        content: '¡Bienvenido! Un abogado se conectará contigo en breve. Mientras tanto, puedes describirnos tu situación.',
+                        content: '¡Bienvenido! Un abogado se conectará contigo en breve. Mientras tanto, cuéntanos tu situación.',
                         sent_at: new Date().toISOString()
                     });
 
-                    // Start polling
                     loadMessages();
                     state.polling = setInterval(loadMessages, CONFIG.pollInterval);
                 }
             } catch (err) {
                 console.error('[JCJ] Error:', err);
-                setStatus('Error de conexión. Reintentando...');
+                setStatus('Error. Reintentando...');
                 setTimeout(startConversation, 3000);
             }
         }
 
-        // Load messages
         async function loadMessages() {
             if (!state.conversationId) return;
-
             try {
                 const msgs = await api('/conversations/' + state.conversationId + '/messages/');
                 renderMessages(msgs);
-
-                // Check for new messages when closed
                 if (!state.isOpen && msgs.length > state.lastMessageCount) {
-                    const badge = document.getElementById('badge');
-                    badge.textContent = msgs.length - state.lastMessageCount;
-                    badge.classList.add('show');
+                    document.getElementById('badge').textContent = msgs.length - state.lastMessageCount;
+                    document.getElementById('badge').classList.add('show');
                 }
-
-                if (state.isOpen) {
-                    state.lastMessageCount = msgs.length;
-                }
-            } catch (err) {
-                console.error('[JCJ] Poll error:', err);
-            }
+                if (state.isOpen) state.lastMessageCount = msgs.length;
+            } catch (err) { console.error('[JCJ] Poll error:', err); }
         }
 
-        // Render messages
         function renderMessages(msgs) {
             const container = document.getElementById('messages');
             const wasAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 50;
-
             container.innerHTML = msgs.map(m => `
                 <div class="msg ${m.sender_type}">
                     <div class="bubble">${escapeHtml(m.content)}</div>
                     <div class="msg-meta">${m.sender_name} · ${formatTime(m.sent_at)}</div>
                 </div>
             `).join('');
-
-            if (wasAtBottom) {
-                container.scrollTop = container.scrollHeight;
-            }
+            if (wasAtBottom) container.scrollTop = container.scrollHeight;
         }
 
-        // Add single message
         function addMessage(msg) {
             const container = document.getElementById('messages');
             container.innerHTML += `
@@ -599,35 +621,21 @@
             container.scrollTop = container.scrollHeight;
         }
 
-        // Send message
         async function sendMessage() {
             const input = document.getElementById('msg-input');
             const content = input.value.trim();
             if (!content || !state.conversationId) return;
-
             input.value = '';
 
-            // Optimistic UI update
-            addMessage({
-                sender_type: 'platform_user',
-                sender_name: 'Tú',
-                content: content,
-                sent_at: new Date().toISOString()
-            });
+            addMessage({ sender_type: 'platform_user', sender_name: 'Tú', content, sent_at: new Date().toISOString() });
 
             try {
                 await api('/conversations/' + state.conversationId + '/send_message/', 'POST', {
-                    content,
-                    sender_type: 'platform_user',
-                    sender_name: 'Usuario'
+                    content, sender_type: 'platform_user', sender_name: 'Usuario'
                 });
-            } catch (err) {
-                setStatus('Error al enviar');
-                setTimeout(() => setStatus(''), 2000);
-            }
+            } catch (err) { setStatus('Error al enviar'); setTimeout(() => setStatus(''), 2000); }
         }
 
-        // Utilities
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
@@ -638,22 +646,8 @@
             return new Date(isoString).toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' });
         }
 
-        // Initialize - notify parent of initial size
-        notifyResize(100, 100);
-
-        // Enable button when terms accepted
-        document.getElementById('accept-terms').addEventListener('change', function () {
-            const btn = document.getElementById('start-btn');
-            if (this.checked) {
-                btn.disabled = false;
-                btn.style.opacity = '1';
-                btn.style.cursor = 'pointer';
-            } else {
-                btn.disabled = true;
-                btn.style.opacity = '0.5';
-                btn.style.cursor = 'not-allowed';
-            }
-        });
+        // Initialize - show alert balloon
+        notifyResize(320, 220);
     </script>
 </body>
 
