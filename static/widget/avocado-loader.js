@@ -58,14 +58,15 @@
         position: fixed;
         bottom: 0;
         ${position}: 0;
-        width: 80px;
-        height: 80px;
+        width: 100px;
+        height: 100px;
         z-index: 2147483647;
         pointer-events: none;
         background: transparent !important;
         border: none !important;
         box-shadow: none !important;
         outline: none !important;
+        overflow: visible;
     `;
 
     // Create iframe

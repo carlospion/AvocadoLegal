@@ -394,7 +394,14 @@
                     Hemos detectado posibles irregularidades en tu situación financiera.
                 </div>
                 <p>Nuestros abogados pueden ayudarte a revisar tu caso sin compromiso.</p>
-                <button onclick="startConversation()">Consultar Gratis</button>
+                <label
+                    style="display:flex; align-items:flex-start; gap:8px; margin:12px 0; text-align:left; font-size:12px; color:#555; cursor:pointer;">
+                    <input type="checkbox" id="accept-terms" style="margin-top:2px;">
+                    <span>Acepto que mis datos sean enviados al equipo legal de JCJ Consultings para recibir
+                        asistencia.</span>
+                </label>
+                <button id="start-btn" onclick="startConversation()" disabled
+                    style="opacity:0.5; cursor:not-allowed;">Consultar Gratis</button>
             </div>
 
             <div id="messages" class="hidden"></div>
@@ -470,7 +477,7 @@
             } else {
                 chatWindow.classList.remove('open');
                 chatBtn.classList.remove('open');
-                notifyResize(80, 80);
+                notifyResize(100, 100);
             }
         }
 
@@ -632,7 +639,21 @@
         }
 
         // Initialize - notify parent of initial size
-        notifyResize(80, 80);
+        notifyResize(100, 100);
+
+        // Enable button when terms accepted
+        document.getElementById('accept-terms').addEventListener('change', function () {
+            const btn = document.getElementById('start-btn');
+            if (this.checked) {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+            } else {
+                btn.disabled = true;
+                btn.style.opacity = '0.5';
+                btn.style.cursor = 'not-allowed';
+            }
+        });
     </script>
 </body>
 
