@@ -62,6 +62,10 @@
         height: 80px;
         z-index: 2147483647;
         pointer-events: none;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        outline: none !important;
     `;
 
     // Create iframe
@@ -73,11 +77,16 @@
     iframe.style.cssText = `
         width: 100%;
         height: 100%;
-        border: none;
-        background: transparent;
+        border: none !important;
+        background: transparent !important;
         pointer-events: auto;
+        box-shadow: none !important;
+        outline: none !important;
     `;
     iframe.allow = 'clipboard-write';
+    iframe.setAttribute('allowtransparency', 'true');
+    iframe.setAttribute('scrolling', 'no');
+    iframe.setAttribute('frameborder', '0');
     iframe.setAttribute('loading', 'lazy');
 
     container.appendChild(iframe);
