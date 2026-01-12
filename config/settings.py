@@ -124,6 +124,9 @@ REST_FRAMEWORK = {
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
+# Allow widget to be embedded in iframes
+X_FRAME_OPTIONS = 'SAMEORIGIN'  # Default for most pages
+
 JCJ_SETTINGS = {
     'LANDING_URL': 'https://jcjconsultings.com',
     'WIDGET_POSITION': 'right',

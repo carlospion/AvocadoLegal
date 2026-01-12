@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AvocadoLegal Chat</title>
+    <title>JCJ Legal Chat</title>
     <style>
         * {
             margin: 0;
@@ -13,10 +13,10 @@
         }
 
         :root {
-            --avocado-dark: #2d5016;
-            --avocado-primary: #4a7c23;
-            --avocado-light: #6b9b37;
-            --avocado-cream: #f5f7e8;
+            --jcj-primary: #1e3a5f;
+            --jcj-secondary: #2c5282;
+            --jcj-accent: #3182ce;
+            --jcj-light: #ebf4ff;
         }
 
         body {
@@ -36,10 +36,10 @@
             width: 60px;
             height: 60px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--avocado-dark), var(--avocado-primary));
+            background: linear-gradient(135deg, var(--jcj-primary), var(--jcj-secondary));
             border: none;
             cursor: pointer;
-            box-shadow: 0 4px 20px rgba(45, 80, 22, 0.4);
+            box-shadow: 0 4px 20px rgba(30, 58, 95, 0.4);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -49,7 +49,7 @@
 
         #chat-btn:hover {
             transform: scale(1.08);
-            box-shadow: 0 6px 25px rgba(45, 80, 22, 0.5);
+            box-shadow: 0 6px 25px rgba(30, 58, 95, 0.5);
         }
 
         #chat-btn svg {
@@ -125,7 +125,7 @@
 
         /* Header */
         .chat-header {
-            background: linear-gradient(135deg, var(--avocado-dark), var(--avocado-primary));
+            background: linear-gradient(135deg, var(--jcj-primary), var(--jcj-secondary));
             color: white;
             padding: 16px;
             display: flex;
@@ -141,7 +141,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 18px;
+            font-weight: bold;
         }
 
         .chat-header .info h3 {
@@ -233,7 +234,7 @@
         }
 
         .msg.platform_user .bubble {
-            background: var(--avocado-primary);
+            background: var(--jcj-accent);
             color: white;
             border-radius: 16px 16px 4px 16px;
         }
@@ -282,14 +283,14 @@
         }
 
         .chat-input input:focus {
-            border-color: var(--avocado-primary);
+            border-color: var(--jcj-accent);
         }
 
         .chat-input button {
             width: 44px;
             height: 44px;
             border-radius: 50%;
-            background: var(--avocado-primary);
+            background: var(--jcj-accent);
             border: none;
             cursor: pointer;
             display: flex;
@@ -299,7 +300,7 @@
         }
 
         .chat-input button:hover {
-            background: var(--avocado-dark);
+            background: var(--jcj-primary);
         }
 
         .chat-input button svg {
@@ -317,16 +318,18 @@
             justify-content: center;
             padding: 30px;
             text-align: center;
-            background: var(--avocado-cream);
+            background: var(--jcj-light);
         }
 
-        #welcome-screen .emoji {
-            font-size: 48px;
+        #welcome-screen .logo {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--jcj-primary);
             margin-bottom: 16px;
         }
 
         #welcome-screen h4 {
-            color: var(--avocado-dark);
+            color: var(--jcj-primary);
             margin-bottom: 8px;
             font-size: 18px;
         }
@@ -338,8 +341,18 @@
             line-height: 1.5;
         }
 
+        #welcome-screen .alert-msg {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            color: #856404;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 16px;
+        }
+
         #welcome-screen button {
-            background: var(--avocado-primary);
+            background: var(--jcj-accent);
             color: white;
             border: none;
             padding: 12px 24px;
@@ -351,7 +364,7 @@
         }
 
         #welcome-screen button:hover {
-            background: var(--avocado-dark);
+            background: var(--jcj-primary);
             transform: translateY(-2px);
         }
 
@@ -365,21 +378,23 @@
     <div id="widget-root">
         <div id="chat-window">
             <div class="chat-header">
-                <div class="avatar">🥑</div>
+                <div class="avatar">JCJ</div>
                 <div class="info">
-                    <h3>AvocadoLegal</h3>
-                    <p class="online">Asistencia Legal Online</p>
+                    <h3>JCJ Consultings</h3>
+                    <p class="online">Asistencia Legal</p>
                 </div>
             </div>
 
             <div id="status-bar"></div>
 
             <div id="welcome-screen">
-                <div class="emoji">👋</div>
-                <h4>¡Hola! Estamos aquí para ayudarte</h4>
-                <p>Nuestros abogados están listos para asistirte con cualquier consulta sobre tu situación financiera.
-                </p>
-                <button onclick="startConversation()">Iniciar Consulta</button>
+                <div class="logo">⚖️</div>
+                <h4>Detectamos una irregularidad</h4>
+                <div class="alert-msg" id="detected-msg">
+                    Hemos detectado posibles irregularidades en tu situación financiera.
+                </div>
+                <p>Nuestros abogados pueden ayudarte a revisar tu caso sin compromiso.</p>
+                <button onclick="startConversation()">Consultar Gratis</button>
             </div>
 
             <div id="messages" class="hidden"></div>
@@ -416,6 +431,7 @@
             apiKey: params.get('api_key') || '',
             apiUrl: params.get('api_url') || window.location.origin + '/api/v1',
             position: params.get('position') || 'right',
+            detectedKeyword: params.get('keyword') || '',
             pollInterval: 5000
         };
 
@@ -427,10 +443,16 @@
             lastMessageCount: 0
         };
 
+        // Update detected message if keyword provided
+        if (CONFIG.detectedKeyword) {
+            const alertMsg = document.getElementById('detected-msg');
+            alertMsg.innerHTML = `Detectamos términos como "<strong>${CONFIG.detectedKeyword}</strong>" que podrían indicar irregularidades en tu préstamo.`;
+        }
+
         // Notify parent window about size changes
         function notifyResize(width, height) {
             if (window.parent !== window) {
-                window.parent.postMessage({ type: 'avocado-resize', width, height }, '*');
+                window.parent.postMessage({ type: 'jcj-resize', width, height }, '*');
             }
         }
 
@@ -485,12 +507,12 @@
 
             try {
                 const result = await api('/conversations/', 'POST', {
-                    subject: 'Consulta Legal Widget'
+                    subject: 'Consulta Legal - Irregularidad: ' + (CONFIG.detectedKeyword || 'detectada')
                 });
 
                 if (result.id) {
                     state.conversationId = result.id;
-                    console.log('[AvocadoLegal] Conversation:', result.id);
+                    console.log('[JCJ] Conversation:', result.id);
 
                     // Show chat interface
                     document.getElementById('welcome-screen').classList.add('hidden');
@@ -502,7 +524,7 @@
                     // Add welcome message
                     addMessage({
                         sender_type: 'system',
-                        sender_name: 'AvocadoLegal',
+                        sender_name: 'JCJ Consultings',
                         content: '¡Bienvenido! Un abogado se conectará contigo en breve. Mientras tanto, puedes describirnos tu situación.',
                         sent_at: new Date().toISOString()
                     });
@@ -512,7 +534,7 @@
                     state.polling = setInterval(loadMessages, CONFIG.pollInterval);
                 }
             } catch (err) {
-                console.error('[AvocadoLegal] Error:', err);
+                console.error('[JCJ] Error:', err);
                 setStatus('Error de conexión. Reintentando...');
                 setTimeout(startConversation, 3000);
             }
@@ -537,7 +559,7 @@
                     state.lastMessageCount = msgs.length;
                 }
             } catch (err) {
-                console.error('[AvocadoLegal] Poll error:', err);
+                console.error('[JCJ] Poll error:', err);
             }
         }
 

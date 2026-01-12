@@ -1,8 +1,8 @@
 /**
- * AvocadoLegal Widget Loader v1.0
+ * JCJ Legal Chat Widget Loader v1.0
  * 
- * Este script solo crea un iframe. Toda la lógica del chat
- * se ejecuta dentro del iframe para evitar problemas de CSP.
+ * Este script solo crea un iframe si detecta irregularidades en préstamos.
+ * Toda la lógica del chat se ejecuta dentro del iframe.
  * 
  * Uso:
  * <script src="https://cdn.jsdelivr.net/gh/carlospion/AvocadoLegal@main/static/widget/avocado-loader.js"
@@ -12,6 +12,13 @@
 (function () {
     'use strict';
 
+    // Keywords that indicate loan irregularities
+    const IRREGULARITY_KEYWORDS = [
+        'mora', 'vencido', 'vencida', 'atrasado', 'atrasada', 'deuda',
+        'cobranza', 'cobro', 'penalidad', 'interés moratorio', 'embargo',
+        'incumplimiento', 'impago', 'default', 'atraso', 'irregular'
+    ];
+
     // Get configuration from script tag
     const currentScript = document.currentScript;
     const apiKey = currentScript?.getAttribute('data-api-key') || '';
@@ -19,13 +26,34 @@
     const baseUrl = currentScript?.getAttribute('data-base-url') || 'https://api.avocadolegal.com';
 
     if (!apiKey) {
-        console.error('[AvocadoLegal] Missing data-api-key attribute');
+        console.error('[JCJ] Missing data-api-key attribute');
         return;
     }
 
-    // Create iframe container
+    // Detect irregularities in page content
+    function detectIrregularities() {
+        const pageText = document.body?.innerText?.toLowerCase() || '';
+        for (const keyword of IRREGULARITY_KEYWORDS) {
+            if (pageText.includes(keyword.toLowerCase())) {
+                return { detected: true, keyword };
+            }
+        }
+        return { detected: false };
+    }
+
+    // Check for irregularities
+    const detection = detectIrregularities();
+
+    if (!detection.detected) {
+        console.log('[JCJ] No loan irregularities detected. Widget hidden.');
+        return;
+    }
+
+    console.log('[JCJ] Irregularity detected:', detection.keyword);
+
+    // Create iframe container - completely transparent, no styling
     const container = document.createElement('div');
-    container.id = 'avocado-widget-container';
+    container.id = 'jcj-widget-container';
     container.style.cssText = `
         position: fixed;
         bottom: 0;
@@ -33,16 +61,14 @@
         width: 80px;
         height: 80px;
         z-index: 2147483647;
-        border: none;
-        background: transparent;
         pointer-events: none;
     `;
 
     // Create iframe
     const iframe = document.createElement('iframe');
-    const iframeSrc = `${baseUrl}/widget/embed/?api_key=${encodeURIComponent(apiKey)}&position=${position}`;
+    const iframeSrc = `${baseUrl}/widget/embed/?api_key=${encodeURIComponent(apiKey)}&position=${position}&keyword=${encodeURIComponent(detection.keyword)}`;
 
-    iframe.id = 'avocado-widget-iframe';
+    iframe.id = 'jcj-widget-iframe';
     iframe.src = iframeSrc;
     iframe.style.cssText = `
         width: 100%;
@@ -59,13 +85,12 @@
 
     // Listen for messages from iframe to resize container
     window.addEventListener('message', function (event) {
-        // Verify origin in production
-        if (event.data?.type === 'avocado-resize') {
+        if (event.data?.type === 'jcj-resize') {
             const { width, height } = event.data;
             container.style.width = width + 'px';
             container.style.height = height + 'px';
         }
     });
 
-    console.log('[AvocadoLegal] Widget loader initialized');
+    console.log('[JCJ] Widget loader initialized');
 })();

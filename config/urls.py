@@ -4,6 +4,15 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView, RedirectView
+from django.views.decorators.clickjacking import xframe_options_exempt
+
+
+# Widget embed view that allows iframe embedding from any origin
+@xframe_options_exempt
+def widget_embed_view(request):
+    from django.shortcuts import render
+    return render(request, 'widget/embed.html')
+
 
 urlpatterns = [
     path('', RedirectView.as_view(url='/lawyers/', permanent=False), name='home'),
@@ -14,7 +23,7 @@ urlpatterns = [
     path('lawyers/', include('apps.lawyers.urls')),
     path('demo/', TemplateView.as_view(template_name='demo.html'), name='demo'),
     path('platforms/register/', TemplateView.as_view(template_name='platforms/register.html'), name='platform_register'),
-    path('widget/embed/', TemplateView.as_view(template_name='widget/embed.html'), name='widget_embed'),
+    path('widget/embed/', widget_embed_view, name='widget_embed'),
 ]
 
 if settings.DEBUG:
