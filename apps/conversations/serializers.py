@@ -29,7 +29,7 @@ class ConversationSerializer(serializers.ModelSerializer):
             'id', 'platform', 'platform_name', 'platform_user',
             'client', 'client_name', 'loan', 'lawyer', 'lawyer_name',
             'status', 'status_display', 'subject', 'procedure_requested',
-            'resolution_notes', 'messages', 'message_count',
+            'resolution_notes', 'page_url', 'messages', 'message_count',
             'created_at', 'closed_at'
         ]
         read_only_fields = ['id', 'created_at', 'closed_at']
@@ -48,13 +48,14 @@ class ConversationCreateSerializer(serializers.ModelSerializer):
     """Serializer for creating a Conversation."""
     class Meta:
         model = Conversation
-        fields = ['platform_user', 'client', 'loan', 'subject', 'procedure_requested']
+        fields = ['platform_user', 'client', 'loan', 'subject', 'procedure_requested', 'page_url']
         extra_kwargs = {
             'platform_user': {'required': False, 'allow_null': True},
             'client': {'required': False, 'allow_null': True},
             'loan': {'required': False, 'allow_null': True},
             'subject': {'required': False, 'allow_blank': True},
             'procedure_requested': {'required': False, 'allow_blank': True},
+            'page_url': {'required': False, 'allow_blank': True},
         }
 
 

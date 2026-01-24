@@ -4,7 +4,8 @@
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <a href="{% url 'lawyers:conversation_list' %}" class="text-decoration-none"><i class="bi bi-arrow-left"></i> Volver</a>
+        <a href="{% url 'lawyers:conversation_list' %}" class="text-decoration-none"><i class="bi bi-arrow-left"></i>
+            Volver</a>
         <h2 class="mt-2">{{ conversation.client.name|default:"Sin cliente" }}</h2>
         <span class="status-badge status-{{ conversation.status }}">{{ conversation.get_status_display }}</span>
     </div>
@@ -25,6 +26,15 @@
                     <div class="bubble">
                         <small class="d-block text-muted mb-1">{{ msg.sender_name }}</small>
                         {{ msg.content }}
+                        {% if msg.attachments %}
+                        <div class="attachments mt-2">
+                            {% for attachment in msg.attachments %}
+                            <a href="{{ attachment.url }}" target="_blank" class="badge bg-secondary me-1">
+                                <i class="bi bi-paperclip"></i> {{ attachment.name|default:"Archivo" }}
+                            </a>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
                     </div>
                     <small class="text-muted">{{ msg.sent_at|time:"H:i" }}</small>
                 </div>
@@ -35,7 +45,8 @@
             {% if conversation.status != 'closed' %}
             <div class="chat-input">
                 <form id="messageForm" class="d-flex gap-2">
-                    <input type="text" class="form-control" id="messageInput" placeholder="Escribe tu respuesta..." autocomplete="off">
+                    <input type="text" class="form-control" id="messageInput" placeholder="Escribe tu respuesta..."
+                        autocomplete="off">
                     <button type="submit" class="btn btn-primary">Enviar</button>
                 </form>
             </div>
@@ -69,6 +80,14 @@
                 <p><strong>Plataforma:</strong> {{ conversation.platform.name }}</p>
                 <p><strong>Creado:</strong> {{ conversation.created_at|date:"d/m/Y H:i" }}</p>
                 <p><strong>Asunto:</strong> {{ conversation.subject|default:"No especificado" }}</p>
+                {% if conversation.page_url %}
+                <p>
+                    <strong>URL de Origen:</strong><br>
+                    <a href="{{ conversation.page_url }}" target="_blank" class="text-primary text-break">
+                        <i class="bi bi-box-arrow-up-right"></i> {{ conversation.page_url|truncatechars:50 }}
+                    </a>
+                </p>
+                {% endif %}
                 {% if conversation.closed_at %}
                 <p><strong>Cerrado:</strong> {{ conversation.closed_at|date:"d/m/Y H:i" }}</p>
                 {% endif %}
@@ -80,46 +99,46 @@
 
 {% block extra_js %}
 <script>
-document.getElementById('messageForm')?.addEventListener('submit', function(e) {
-    e.preventDefault();
-    const input = document.getElementById('messageInput');
-    const content = input.value.trim();
-    if (!content) return;
-    
-    fetch('{% url "lawyers:send_message" conversation.id %}', {
-        method: 'POST',
-        headers: {'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/x-www-form-urlencoded'},
-        body: 'content=' + encodeURIComponent(content)
-    })
-    .then(r => r.json())
-    .then(data => {
-        if (data.success) {
-            const msg = data.message;
-            const div = document.createElement('div');
-            div.className = 'chat-message lawyer';
-            div.innerHTML = `<div class="bubble"><small class="d-block text-muted mb-1">${msg.sender_name}</small>${msg.content}</div><small class="text-muted">${new Date(msg.sent_at).toLocaleTimeString('es-DO', {hour: '2-digit', minute:'2-digit'})}</small>`;
-            document.getElementById('chatMessages').appendChild(div);
-            document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
-            input.value = '';
-        }
-    });
-});
+    document.getElementById('messageForm')?.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const input = document.getElementById('messageInput');
+        const content = input.value.trim();
+        if (!content) return;
 
-function closeCase() {
-    if (!confirm('Estas seguro de cerrar este caso?')) return;
-    const notes = prompt('Notas de resolucion (opcional):');
-    fetch('{% url "lawyers:close_case" conversation.id %}', {
-        method: 'POST',
-        headers: {'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/x-www-form-urlencoded'},
-        body: 'notes=' + encodeURIComponent(notes || '')
-    })
-    .then(r => r.json())
-    .then(data => {
-        if (data.success) location.reload();
+        fetch('{% url "lawyers:send_message" conversation.id %}', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'content=' + encodeURIComponent(content)
+        })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    const msg = data.message;
+                    const div = document.createElement('div');
+                    div.className = 'chat-message lawyer';
+                    div.innerHTML = `<div class="bubble"><small class="d-block text-muted mb-1">${msg.sender_name}</small>${msg.content}</div><small class="text-muted">${new Date(msg.sent_at).toLocaleTimeString('es-DO', { hour: '2-digit', minute: '2-digit' })}</small>`;
+                    document.getElementById('chatMessages').appendChild(div);
+                    document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+                    input.value = '';
+                }
+            });
     });
-}
 
-// Scroll to bottom on load
-document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+    function closeCase() {
+        if (!confirm('Estas seguro de cerrar este caso?')) return;
+        const notes = prompt('Notas de resolucion (opcional):');
+        fetch('{% url "lawyers:close_case" conversation.id %}', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'notes=' + encodeURIComponent(notes || '')
+        })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) location.reload();
+            });
+    }
+
+    // Scroll to bottom on load
+    document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
 </script>
 {% endblock %}

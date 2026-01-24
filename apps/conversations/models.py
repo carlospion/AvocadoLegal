@@ -24,6 +24,7 @@ class Conversation(models.Model):
     subject = models.CharField(max_length=255, blank=True, verbose_name='Asunto')
     procedure_requested = models.CharField(max_length=100, blank=True, verbose_name='Procedimiento Solicitado')
     resolution_notes = models.TextField(blank=True, verbose_name='Notas de Resolucion')
+    page_url = models.URLField(max_length=500, blank=True, verbose_name='URL de Origen')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     closed_at = models.DateTimeField(null=True, blank=True)
