@@ -34,8 +34,8 @@
         /* Alert Balloon */
         #alert-balloon {
             position: absolute;
-            bottom: 0;
-            right: 0;
+            bottom: 20px;
+            right: 20px;
             width: 300px;
             background: white;
             border-radius: 16px;
@@ -616,7 +616,7 @@
             if (CONFIG.keyword) {
                 document.getElementById('detected-msg').innerHTML = `Detectamos términos como "<strong>${CONFIG.keyword}</strong>" que podrían indicar irregularidades.`;
             }
-            notifyResize(320, 240);
+            notifyResize(340, 300);
         } else {
             document.getElementById('chat-btn').classList.add('visible');
             notifyResize(100, 100);

@@ -42,8 +42,8 @@
     console.log('[JCJ] Mode:', mode, detection.detected ? `(keyword: ${detection.keyword})` : '');
 
     // Determine initial size based on mode
-    const initialWidth = mode === 'alert' ? 320 : 100;
-    const initialHeight = mode === 'alert' ? 240 : 100;
+    const initialWidth = mode === 'alert' ? 340 : 100;
+    const initialHeight = mode === 'alert' ? 300 : 100;
 
     // Create container
     const container = document.createElement('div');
