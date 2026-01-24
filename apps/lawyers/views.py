@@ -2,6 +2,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth import authenticate, login, logout
 from django.views.generic import ListView, DetailView, TemplateView
 from django.http import JsonResponse, HttpResponseForbidden
 from django.utils import timezone
@@ -10,9 +11,40 @@ from .models import Lawyer, LawyerSchedule
 from apps.conversations.models import Conversation, Message, ConversationStatus, SenderType
 
 
+def login_view(request):
+    """Login page for lawyers."""
+    if request.user.is_authenticated:
+        if hasattr(request.user, 'lawyer_profile'):
+            return redirect('lawyers:dashboard')
+    
+    error = None
+    if request.method == 'POST':
+        username = request.POST.get('username', '').strip()
+        password = request.POST.get('password', '')
+        user = authenticate(request, username=username, password=password)
+        
+        if user is not None:
+            if hasattr(user, 'lawyer_profile'):
+                login(request, user)
+                next_url = request.GET.get('next', 'lawyers:dashboard')
+                return redirect(next_url)
+            else:
+                error = 'Tu usuario no tiene un perfil de abogado asociado.'
+        else:
+            error = 'Usuario o contraseña incorrectos.'
+    
+    return render(request, 'lawyers/login.html', {'error': error})
+
+
+def logout_view(request):
+    """Logout for lawyers."""
+    logout(request)
+    return redirect('lawyers:login')
+
+
 class LawyerRequiredMixin(LoginRequiredMixin):
     """Mixin that requires the user to be a lawyer."""
-    login_url = '/admin/login/'
+    login_url = '/lawyers/login/'
     
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:

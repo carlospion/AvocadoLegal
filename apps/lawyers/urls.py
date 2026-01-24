@@ -5,6 +5,8 @@ from . import views
 app_name = 'lawyers'
 
 urlpatterns = [
+    path('login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
     path('', views.DashboardView.as_view(), name='dashboard'),
     path('conversations/', views.ConversationListView.as_view(), name='conversation_list'),
     path('conversations/<uuid:pk>/', views.ConversationDetailView.as_view(), name='conversation_detail'),
