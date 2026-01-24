@@ -385,14 +385,20 @@
             text-decoration: underline;
         }
 
+        #welcome-placeholder.hidden {
+            display: none;
+        }
+
         /* Input Area */
         .chat-input {
             padding: 10px;
             background: white;
             border-top: 1px solid #eee;
             display: flex;
+            flex-wrap: wrap;
             gap: 8px;
             align-items: center;
+            position: relative;
         }
 
         .chat-input input {
@@ -471,21 +477,39 @@
             font-size: 14px;
         }
 
-        /* File Preview */
+        /* File Preview - positioned above input */
+        #file-preview-area {
+            position: absolute;
+            bottom: 100%;
+            left: 10px;
+            right: 10px;
+            background: white;
+            border-top: 1px solid #eee;
+            padding: 8px 0;
+        }
+
         .file-preview {
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 8px;
             background: #f0f0f0;
             padding: 6px 10px;
             border-radius: 6px;
             font-size: 12px;
-            margin-right: 8px;
+            max-width: 100%;
+        }
+
+        .file-preview .filename {
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .file-preview .remove {
             cursor: pointer;
             color: #999;
+            font-size: 14px;
         }
 
         .file-preview .remove:hover {
@@ -643,7 +667,7 @@
         function selectFile(file) {
             state.selectedFile = file;
             const preview = document.getElementById('file-preview-area');
-            preview.innerHTML = `<div class="file-preview"><span>📎 ${file.name}</span><span class="remove" onclick="removeFile()">✕</span></div>`;
+            preview.innerHTML = `<div class="file-preview"><span class="filename">📎 ${file.name}</span><span class="remove" onclick="removeFile()">✕</span></div>`;
         }
 
         function removeFile() {
