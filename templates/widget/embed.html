@@ -31,7 +31,7 @@
             right: 20px;
         }
 
-        /* Alert Balloon - Appears First */
+        /* Alert Balloon */
         #alert-balloon {
             position: absolute;
             bottom: 0;
@@ -81,7 +81,6 @@
         #alert-balloon .header h4 {
             color: var(--jcj-primary);
             font-size: 14px;
-            font-weight: 600;
         }
 
         #alert-balloon .header p {
@@ -119,8 +118,8 @@
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
             border: none;
+            transition: all 0.2s;
         }
 
         #alert-balloon .btn-yes {
@@ -141,7 +140,7 @@
             background: #e5e5e5;
         }
 
-        /* Floating Button - Hidden Initially */
+        /* Chat Button */
         #chat-btn {
             width: 60px;
             height: 60px;
@@ -163,7 +162,6 @@
 
         #chat-btn:hover {
             transform: scale(1.08);
-            box-shadow: 0 6px 25px rgba(30, 58, 95, 0.5);
         }
 
         #chat-btn svg {
@@ -184,7 +182,6 @@
             display: block;
         }
 
-        /* Badge */
         .badge {
             position: absolute;
             top: -2px;
@@ -211,7 +208,7 @@
             bottom: 75px;
             right: 0;
             width: 360px;
-            height: 480px;
+            height: 500px;
             background: white;
             border-radius: 16px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
@@ -262,7 +259,6 @@
         .chat-header .info h3 {
             margin: 0;
             font-size: 14px;
-            font-weight: 600;
         }
 
         .chat-header .info p {
@@ -281,21 +277,6 @@
             margin-right: 4px;
         }
 
-        /* Status Bar */
-        #status-bar {
-            padding: 6px 14px;
-            font-size: 11px;
-            color: #666;
-            background: #f8f9fa;
-            text-align: center;
-            border-bottom: 1px solid #eee;
-            display: none;
-        }
-
-        #status-bar.show {
-            display: block;
-        }
-
         /* Messages */
         #messages {
             flex: 1;
@@ -306,7 +287,7 @@
 
         .msg {
             margin-bottom: 10px;
-            max-width: 80%;
+            max-width: 85%;
             animation: fadeIn 0.2s ease;
         }
 
@@ -332,10 +313,10 @@
         }
 
         .bubble {
-            padding: 9px 12px;
+            padding: 10px 14px;
             border-radius: 14px;
             font-size: 13px;
-            line-height: 1.4;
+            line-height: 1.5;
             word-wrap: break-word;
         }
 
@@ -364,6 +345,46 @@
             text-align: right;
         }
 
+        /* Welcome Placeholder */
+        #welcome-placeholder {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            text-align: center;
+            background: var(--jcj-light);
+        }
+
+        #welcome-placeholder .icon {
+            font-size: 40px;
+            margin-bottom: 16px;
+        }
+
+        #welcome-placeholder h4 {
+            color: var(--jcj-primary);
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        #welcome-placeholder p {
+            color: #555;
+            font-size: 13px;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        #welcome-placeholder a {
+            color: var(--jcj-accent);
+            text-decoration: none;
+            font-size: 12px;
+        }
+
+        #welcome-placeholder a:hover {
+            text-decoration: underline;
+        }
+
         /* Input Area */
         .chat-input {
             padding: 10px;
@@ -371,6 +392,7 @@
             border-top: 1px solid #eee;
             display: flex;
             gap: 8px;
+            align-items: center;
         }
 
         .chat-input input {
@@ -407,13 +429,75 @@
             width: 18px;
             height: 18px;
         }
+
+        .attach-btn {
+            background: transparent !important;
+            border: 1px solid #ddd !important;
+        }
+
+        .attach-btn:hover {
+            background: #f5f5f5 !important;
+            border-color: #ccc !important;
+        }
+
+        .attach-btn svg {
+            fill: #666 !important;
+        }
+
+        /* Drop Zone */
+        #drop-zone {
+            display: none;
+            position: absolute;
+            inset: 0;
+            background: rgba(49, 130, 206, 0.9);
+            z-index: 10;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            border-radius: 16px;
+        }
+
+        #drop-zone.active {
+            display: flex;
+        }
+
+        #drop-zone .icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        #drop-zone p {
+            font-size: 14px;
+        }
+
+        /* File Preview */
+        .file-preview {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f0f0f0;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            margin-right: 8px;
+        }
+
+        .file-preview .remove {
+            cursor: pointer;
+            color: #999;
+        }
+
+        .file-preview .remove:hover {
+            color: #e53935;
+        }
     </style>
 </head>
 
 <body>
     <div id="widget-root">
-        <!-- Alert Balloon - Appears First -->
-        <div id="alert-balloon">
+        <!-- Alert Balloon (for irregular loans) -->
+        <div id="alert-balloon" class="hidden">
             <div class="header">
                 <div class="logo">⚖️</div>
                 <div>
@@ -421,15 +505,11 @@
                     <p>Asistencia Legal</p>
                 </div>
             </div>
-            <div class="message" id="detected-msg">
-                Hemos detectado posibles irregularidades en tu situación.
-            </div>
-            <div class="description">
-                ¿Deseas consultar con nuestros abogados sin compromiso?
-            </div>
+            <div class="message" id="detected-msg">Hemos detectado posibles irregularidades.</div>
+            <div class="description">¿Deseas consultar con nuestros abogados sin compromiso?</div>
             <div class="buttons">
-                <button class="btn btn-yes" onclick="acceptConsultation()">Sí, consultar</button>
-                <button class="btn btn-no" onclick="declineConsultation()">No, gracias</button>
+                <button class="btn btn-yes" onclick="acceptAlert()">Sí, consultar</button>
+                <button class="btn btn-no" onclick="declineAlert()">No, gracias</button>
             </div>
         </div>
 
@@ -443,10 +523,30 @@
                 </div>
             </div>
 
-            <div id="status-bar"></div>
-            <div id="messages"></div>
+            <div id="drop-zone">
+                <div class="icon">📎</div>
+                <p>Suelta el archivo aquí</p>
+            </div>
+
+            <div id="welcome-placeholder">
+                <div class="icon">💬</div>
+                <h4>Bienvenido al Chat Legal</h4>
+                <p>Donde podrás hacer consultas y enviar casos al equipo de Abogados que te ofrece JCJ Consulting con el
+                    fin de aclarar tus dudas e iniciar el proceso legal.</p>
+                <a href="https://jcjconsultings.com" target="_blank">Conoce al equipo →</a>
+            </div>
+
+            <div id="messages" class="hidden"></div>
 
             <div class="chat-input" id="input-area">
+                <button class="attach-btn" onclick="triggerFileSelect()" title="Adjuntar archivo">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z" />
+                    </svg>
+                </button>
+                <input type="file" id="file-input" hidden onchange="handleFileSelect(event)">
+                <div id="file-preview-area"></div>
                 <input type="text" id="msg-input" placeholder="Escribe tu mensaje..."
                     onkeypress="if(event.key==='Enter')sendMessage()">
                 <button onclick="sendMessage()">
@@ -457,7 +557,7 @@
             </div>
         </div>
 
-        <!-- Chat Button - Hidden Initially -->
+        <!-- Chat Button -->
         <button id="chat-btn" onclick="toggleChat()">
             <span class="badge" id="badge">0</span>
             <svg class="chat-icon" viewBox="0 0 24 24">
@@ -476,45 +576,38 @@
         const CONFIG = {
             apiKey: params.get('api_key') || '',
             apiUrl: params.get('api_url') || window.location.origin + '/api/v1',
-            detectedKeyword: params.get('keyword') || '',
+            mode: params.get('mode') || 'normal', // 'normal' or 'alert'
+            keyword: params.get('keyword') || '',
+            pageUrl: params.get('page_url') || '',
             pollInterval: 5000
         };
 
-        const state = {
-            isOpen: false,
-            conversationId: null,
-            polling: null,
-            lastMessageCount: 0,
-            accepted: false
-        };
+        const state = { isOpen: false, conversationId: null, polling: null, lastMessageCount: 0, selectedFile: null };
 
-        // Update detected message if keyword provided
-        if (CONFIG.detectedKeyword) {
-            document.getElementById('detected-msg').innerHTML =
-                `Detectamos términos como "<strong>${CONFIG.detectedKeyword}</strong>" que podrían indicar irregularidades en tu préstamo.`;
-        }
+        function notifyResize(w, h) { if (window.parent !== window) window.parent.postMessage({ type: 'jcj-resize', width: w, height: h }, '*'); }
 
-        function notifyResize(width, height) {
-            if (window.parent !== window) {
-                window.parent.postMessage({ type: 'jcj-resize', width, height }, '*');
+        // Initialize based on mode
+        if (CONFIG.mode === 'alert') {
+            document.getElementById('alert-balloon').classList.remove('hidden');
+            if (CONFIG.keyword) {
+                document.getElementById('detected-msg').innerHTML = `Detectamos términos como "<strong>${CONFIG.keyword}</strong>" que podrían indicar irregularidades.`;
             }
+            notifyResize(320, 240);
+        } else {
+            document.getElementById('chat-btn').classList.add('visible');
+            notifyResize(100, 100);
         }
 
-        // User accepts consultation
-        function acceptConsultation() {
-            state.accepted = true;
+        function acceptAlert() {
             document.getElementById('alert-balloon').classList.add('hidden');
             document.getElementById('chat-btn').classList.add('visible');
             notifyResize(100, 100);
-
-            // Auto-open chat
-            setTimeout(() => toggleChat(), 300);
+            setTimeout(() => toggleChat(), 200);
         }
 
-        // User declines
-        function declineConsultation() {
+        function declineAlert() {
             document.getElementById('alert-balloon').classList.add('hidden');
-            notifyResize(0, 0); // Hide widget completely
+            notifyResize(0, 0);
         }
 
         function toggleChat() {
@@ -525,13 +618,8 @@
             if (state.isOpen) {
                 chatWindow.classList.add('open');
                 chatBtn.classList.add('open');
-                notifyResize(400, 580);
+                notifyResize(400, 600);
                 document.getElementById('badge').classList.remove('show');
-
-                // Start conversation on first open
-                if (!state.conversationId) {
-                    startConversation();
-                }
             } else {
                 chatWindow.classList.remove('open');
                 chatBtn.classList.remove('open');
@@ -539,50 +627,55 @@
             }
         }
 
-        function setStatus(msg) {
-            const bar = document.getElementById('status-bar');
-            if (msg) { bar.textContent = msg; bar.classList.add('show'); }
-            else { bar.classList.remove('show'); }
+        // Drag & Drop
+        const chatWindow = document.getElementById('chat-window');
+        chatWindow.addEventListener('dragover', e => { e.preventDefault(); document.getElementById('drop-zone').classList.add('active'); });
+        chatWindow.addEventListener('dragleave', e => { if (!chatWindow.contains(e.relatedTarget)) document.getElementById('drop-zone').classList.remove('active'); });
+        chatWindow.addEventListener('drop', e => {
+            e.preventDefault();
+            document.getElementById('drop-zone').classList.remove('active');
+            if (e.dataTransfer.files.length > 0) selectFile(e.dataTransfer.files[0]);
+        });
+
+        function triggerFileSelect() { document.getElementById('file-input').click(); }
+        function handleFileSelect(e) { if (e.target.files.length > 0) selectFile(e.target.files[0]); }
+
+        function selectFile(file) {
+            state.selectedFile = file;
+            const preview = document.getElementById('file-preview-area');
+            preview.innerHTML = `<div class="file-preview"><span>📎 ${file.name}</span><span class="remove" onclick="removeFile()">✕</span></div>`;
+        }
+
+        function removeFile() {
+            state.selectedFile = null;
+            document.getElementById('file-preview-area').innerHTML = '';
         }
 
         async function api(endpoint, method = 'GET', data = null) {
             const opts = { method, headers: { 'Content-Type': 'application/json' } };
             if (CONFIG.apiKey) opts.headers['Authorization'] = 'Api-Key ' + CONFIG.apiKey;
             if (data) opts.body = JSON.stringify(data);
-
             const res = await fetch(CONFIG.apiUrl + endpoint, opts);
             if (!res.ok) throw new Error('API Error: ' + res.status);
             return res.json();
         }
 
         async function startConversation() {
-            setStatus('Conectando...');
-
             try {
                 const result = await api('/conversations/', 'POST', {
-                    subject: 'Consulta Legal - ' + (CONFIG.detectedKeyword || 'irregularidad detectada')
+                    subject: CONFIG.keyword ? `Irregularidad: ${CONFIG.keyword}` : 'Consulta Legal',
+                    page_url: CONFIG.pageUrl
                 });
-
                 if (result.id) {
                     state.conversationId = result.id;
                     console.log('[JCJ] Conversation:', result.id);
-                    setStatus('');
-
-                    addMessage({
-                        sender_type: 'system',
-                        sender_name: 'JCJ Consultings',
-                        content: '¡Bienvenido! Un abogado se conectará contigo en breve. Mientras tanto, cuéntanos tu situación.',
-                        sent_at: new Date().toISOString()
-                    });
-
+                    document.getElementById('welcome-placeholder').classList.add('hidden');
+                    document.getElementById('messages').classList.remove('hidden');
+                    addMessage({ sender_type: 'system', sender_name: 'JCJ', content: '¡Bienvenido! Un abogado se conectará contigo en breve.', sent_at: new Date().toISOString() });
                     loadMessages();
                     state.polling = setInterval(loadMessages, CONFIG.pollInterval);
                 }
-            } catch (err) {
-                console.error('[JCJ] Error:', err);
-                setStatus('Error. Reintentando...');
-                setTimeout(startConversation, 3000);
-            }
+            } catch (err) { console.error('[JCJ] Error:', err); }
         }
 
         async function loadMessages() {
@@ -601,53 +694,39 @@
         function renderMessages(msgs) {
             const container = document.getElementById('messages');
             const wasAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 50;
-            container.innerHTML = msgs.map(m => `
-                <div class="msg ${m.sender_type}">
-                    <div class="bubble">${escapeHtml(m.content)}</div>
-                    <div class="msg-meta">${m.sender_name} · ${formatTime(m.sent_at)}</div>
-                </div>
-            `).join('');
+            container.innerHTML = msgs.map(m => `<div class="msg ${m.sender_type}"><div class="bubble">${escapeHtml(m.content)}</div><div class="msg-meta">${m.sender_name} · ${formatTime(m.sent_at)}</div></div>`).join('');
             if (wasAtBottom) container.scrollTop = container.scrollHeight;
         }
 
         function addMessage(msg) {
             const container = document.getElementById('messages');
-            container.innerHTML += `
-                <div class="msg ${msg.sender_type}">
-                    <div class="bubble">${escapeHtml(msg.content)}</div>
-                    <div class="msg-meta">${msg.sender_name} · ${formatTime(msg.sent_at)}</div>
-                </div>
-            `;
+            container.innerHTML += `<div class="msg ${msg.sender_type}"><div class="bubble">${escapeHtml(msg.content)}</div><div class="msg-meta">${msg.sender_name} · ${formatTime(msg.sent_at)}</div></div>`;
             container.scrollTop = container.scrollHeight;
         }
 
         async function sendMessage() {
             const input = document.getElementById('msg-input');
             const content = input.value.trim();
-            if (!content || !state.conversationId) return;
-            input.value = '';
+            if (!content && !state.selectedFile) return;
 
-            addMessage({ sender_type: 'platform_user', sender_name: 'Tú', content, sent_at: new Date().toISOString() });
+            // Start conversation on first message
+            if (!state.conversationId) {
+                await startConversation();
+                if (!state.conversationId) return;
+            }
+
+            input.value = '';
+            const msgContent = state.selectedFile ? `${content} [Archivo: ${state.selectedFile.name}]` : content;
+            addMessage({ sender_type: 'platform_user', sender_name: 'Tú', content: msgContent, sent_at: new Date().toISOString() });
+            removeFile();
 
             try {
-                await api('/conversations/' + state.conversationId + '/send_message/', 'POST', {
-                    content, sender_type: 'platform_user', sender_name: 'Usuario'
-                });
-            } catch (err) { setStatus('Error al enviar'); setTimeout(() => setStatus(''), 2000); }
+                await api('/conversations/' + state.conversationId + '/send_message/', 'POST', { content: msgContent, sender_type: 'platform_user', sender_name: 'Usuario' });
+            } catch (err) { console.error('[JCJ] Send error:', err); }
         }
 
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        function formatTime(isoString) {
-            return new Date(isoString).toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' });
-        }
-
-        // Initialize - show alert balloon
-        notifyResize(320, 220);
+        function escapeHtml(text) { const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
+        function formatTime(iso) { return new Date(iso).toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' }); }
     </script>
 </body>
 

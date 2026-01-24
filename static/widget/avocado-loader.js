@@ -1,25 +1,19 @@
 /**
- * JCJ Legal Chat Widget Loader v1.0
+ * JCJ Legal Chat Widget Loader v2.0
  * 
- * Este script solo crea un iframe si detecta irregularidades en préstamos.
- * Toda la lógica del chat se ejecuta dentro del iframe.
- * 
- * Uso:
- * <script src="https://cdn.jsdelivr.net/gh/carlospion/AvocadoLegal@main/static/widget/avocado-loader.js"
- *     data-api-key="TU_API_KEY">
- * </script>
+ * Widget siempre visible. Si detecta préstamos irregulares, muestra
+ * alert balloon. Si no, muestra solo el botón con placeholder de bienvenida.
  */
 (function () {
     'use strict';
 
-    // Keywords that indicate loan irregularities
+    // Keywords que indican préstamos irregulares
     const IRREGULARITY_KEYWORDS = [
         'mora', 'vencido', 'vencida', 'atrasado', 'atrasada', 'deuda',
         'cobranza', 'cobro', 'penalidad', 'interés moratorio', 'embargo',
         'incumplimiento', 'impago', 'default', 'atraso', 'irregular'
     ];
 
-    // Get configuration from script tag
     const currentScript = document.currentScript;
     const apiKey = currentScript?.getAttribute('data-api-key') || '';
     const position = currentScript?.getAttribute('data-position') || 'right';
@@ -30,7 +24,7 @@
         return;
     }
 
-    // Detect irregularities in page content
+    // Detect irregularities (for alert mode)
     function detectIrregularities() {
         const pageText = document.body?.innerText?.toLowerCase() || '';
         for (const keyword of IRREGULARITY_KEYWORDS) {
@@ -41,25 +35,25 @@
         return { detected: false };
     }
 
-    // Check for irregularities
     const detection = detectIrregularities();
+    const mode = detection.detected ? 'alert' : 'normal';
+    const pageUrl = window.location.href;
 
-    if (!detection.detected) {
-        console.log('[JCJ] No loan irregularities detected. Widget hidden.');
-        return;
-    }
+    console.log('[JCJ] Mode:', mode, detection.detected ? `(keyword: ${detection.keyword})` : '');
 
-    console.log('[JCJ] Irregularity detected:', detection.keyword);
+    // Determine initial size based on mode
+    const initialWidth = mode === 'alert' ? 320 : 100;
+    const initialHeight = mode === 'alert' ? 240 : 100;
 
-    // Create iframe container - completely transparent, no styling
+    // Create container
     const container = document.createElement('div');
     container.id = 'jcj-widget-container';
     container.style.cssText = `
         position: fixed;
         bottom: 0;
         ${position}: 0;
-        width: 320px;
-        height: 240px;
+        width: ${initialWidth}px;
+        height: ${initialHeight}px;
         z-index: 2147483647;
         pointer-events: none;
         background: transparent !important;
@@ -70,9 +64,9 @@
     `;
 
     // Create iframe
-    const iframe = document.createElement('iframe');
-    const iframeSrc = `${baseUrl}/widget/embed/?api_key=${encodeURIComponent(apiKey)}&position=${position}&keyword=${encodeURIComponent(detection.keyword)}`;
+    const iframeSrc = `${baseUrl}/widget/embed/?api_key=${encodeURIComponent(apiKey)}&mode=${mode}&keyword=${encodeURIComponent(detection.keyword || '')}&page_url=${encodeURIComponent(pageUrl)}`;
 
+    const iframe = document.createElement('iframe');
     iframe.id = 'jcj-widget-iframe';
     iframe.src = iframeSrc;
     iframe.style.cssText = `
@@ -93,7 +87,7 @@
     container.appendChild(iframe);
     document.body.appendChild(container);
 
-    // Listen for messages from iframe to resize container
+    // Listen for resize messages from iframe
     window.addEventListener('message', function (event) {
         if (event.data?.type === 'jcj-resize') {
             const { width, height } = event.data;
@@ -102,5 +96,5 @@
         }
     });
 
-    console.log('[JCJ] Widget loader initialized');
+    console.log('[JCJ] Widget loaded');
 })();
