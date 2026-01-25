@@ -619,7 +619,16 @@
 
         const state = { isOpen: false, conversationId: null, polling: null, lastMessageCount: 0, selectedFile: null };
 
-        function notifyResize(w, h) { if (window.parent !== window) window.parent.postMessage({ type: 'jcj-resize', width: w, height: h }, '*'); }
+        function notifyResize(w, h) {
+            console.log('[JCJ Embed] notifyResize called:', w, 'x', h);
+            if (window.parent !== window) {
+                const message = { type: 'jcj-resize', width: w, height: h };
+                console.log('[JCJ Embed] Sending postMessage:', message);
+                window.parent.postMessage(message, '*');
+            } else {
+                console.log('[JCJ Embed] Not in iframe, skipping postMessage');
+            }
+        }
 
         // Initialize based on mode
         if (CONFIG.mode === 'alert') {
