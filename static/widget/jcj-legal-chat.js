@@ -138,29 +138,29 @@
     container.appendChild(iframe);
     document.body.appendChild(container);
 
-    // Escuchar mensajes del iframe con validación de origen
+    // Escuchar mensajes del iframe para resize dinámico
     window.addEventListener('message', function (event) {
-        // Validar origen del mensaje
-        if (event.origin !== widgetOrigin) {
-            // En desarrollo local, permitir localhost
-            if (!event.origin.includes('127.0.0.1') && !event.origin.includes('localhost')) {
-                return;
-            }
-        }
-
         const data = event.data;
-        if (!data || !data.type) return;
+        if (!data || typeof data !== 'object') return;
+
+        // Solo procesar mensajes de tipo jcj-*
+        if (!data.type || !data.type.startsWith('jcj-')) return;
+
+        console.log('[JCJ] Message received:', data.type, data);
 
         switch (data.type) {
             case 'jcj-resize':
-                // Expandir/contraer widget
-                container.style.width = (data.width || 70) + 'px';
-                container.style.height = (data.height || 70) + 'px';
-                iframe.style.borderRadius = data.expanded ? '16px' : (data.width > 100 ? '16px' : '50%');
+                // Expandir/contraer widget dinámicamente
+                const newWidth = data.width || 60;
+                const newHeight = data.height || 60;
+                console.log('[JCJ] Resizing to:', newWidth, 'x', newHeight);
+                container.style.width = newWidth + 'px';
+                container.style.height = newHeight + 'px';
+                iframe.style.borderRadius = newWidth > 100 ? '16px' : '50%';
                 break;
 
             case 'jcj-ready':
-                console.log('[JCJ] Widget listo v2.1.0');
+                console.log('[JCJ] Widget listo v2.1.1');
                 break;
 
             case 'jcj-error':
