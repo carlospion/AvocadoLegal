@@ -97,7 +97,7 @@
         locale: config.locale,
     });
 
-    // Crear contenedor
+    // Crear contenedor - posicionado desde bottom, contenido crece hacia arriba
     const container = document.createElement('div');
     container.id = 'jcj-widget-container';
     container.style.cssText = `
@@ -108,10 +108,13 @@
         height: ${initialHeight}px;
         z-index: 2147483647;
         pointer-events: none;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
     `;
 
-    // Crear iframe
+    // Crear iframe - ocupa todo el contenedor, alineado al bottom
     const iframe = document.createElement('iframe');
     iframe.id = 'jcj-widget-iframe';
     iframe.src = `${embedBaseUrl}/widget/embed/?${params.toString()}`;
@@ -123,7 +126,7 @@
         pointer-events: auto;
         border-radius: ${mode === 'alert' ? '16px' : '50%'};
         box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: border-radius 0.3s ease;
     `;
 
     // Sandbox con permisos mínimos necesarios

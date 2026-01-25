@@ -23,12 +23,22 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: transparent;
             overflow: hidden;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: flex-end;
         }
 
         #widget-root {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: flex-end;
+            width: 100%;
+            height: 100%;
         }
 
         /* Alert Balloon */
@@ -205,10 +215,11 @@
         /* Chat Window */
         #chat-window {
             position: absolute;
-            bottom: 75px;
+            bottom: 60px;
             right: 0;
             width: 360px;
             height: 500px;
+            max-height: calc(100vh - 70px);
             background: white;
             border-radius: 16px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
@@ -616,16 +627,16 @@
             if (CONFIG.keyword) {
                 document.getElementById('detected-msg').innerHTML = `Detectamos términos como "<strong>${CONFIG.keyword}</strong>" que podrían indicar irregularidades.`;
             }
-            notifyResize(340, 300);
+            notifyResize(340, 320);
         } else {
             document.getElementById('chat-btn').classList.add('visible');
-            notifyResize(100, 100);
+            notifyResize(60, 60);
         }
 
         function acceptAlert() {
             document.getElementById('alert-balloon').classList.add('hidden');
             document.getElementById('chat-btn').classList.add('visible');
-            notifyResize(100, 100);
+            notifyResize(60, 60);
             setTimeout(() => toggleChat(), 200);
         }
 
@@ -642,12 +653,12 @@
             if (state.isOpen) {
                 chatWindow.classList.add('open');
                 chatBtn.classList.add('open');
-                notifyResize(400, 600);
+                notifyResize(380, 580);  // Width: chat width + padding, Height: chat + button + spacing
                 document.getElementById('badge').classList.remove('show');
             } else {
                 chatWindow.classList.remove('open');
                 chatBtn.classList.remove('open');
-                notifyResize(100, 100);
+                notifyResize(60, 60);
             }
         }
 
