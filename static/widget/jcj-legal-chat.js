@@ -1,5 +1,5 @@
 ﻿/**
- * JCJ Legal Chat Widget Loader v2.1.0
+ * JCJ Legal Chat Widget Loader v2.1.2
  * 
  * Este script SOLO crea un iframe. Todo el widget vive dentro del iframe.
  * Puede distribuirse via CDN (jsdelivr, unpkg) para máxima compatibilidad.
@@ -8,7 +8,7 @@
  * 
  * USO:
  * <script 
- *     src="https://cdn.jsdelivr.net/gh/carlospion/AvocadoLegal@v2.1.0/static/widget/jcj-legal-chat.js"
+ *     src="https://cdn.jsdelivr.net/gh/carlospion/AvocadoLegal@v2.1.2/static/widget/jcj-legal-chat.js"
  *     data-api-key="TU_API_KEY"
  *     data-api-url="https://tu-servidor.com/api/v1"
  *     data-position="right"
