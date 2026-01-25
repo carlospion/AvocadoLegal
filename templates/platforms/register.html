@@ -450,16 +450,16 @@
                     const iframeCode = `<!-- Opción alternativa: iframe directo -->
 <iframe 
     src="${iframeUrl}"
-    style="border:none; position:fixed; bottom:0; right:0; width:80px; height:80px; z-index:2147483647;"
+    style="border:none; position:fixed; bottom:20px; right:20px; width:60px; height:60px; z-index:2147483647; background:transparent;"
     allow="clipboard-write"
-    id="avocado-widget">
+    id="jcj-widget">
 </iframe>
 
 <script>
 // Escucha cambios de tamaño del widget
 window.addEventListener('message', function(e) {
-    if (e.data?.type === 'avocado-resize') {
-        var f = document.getElementById('avocado-widget');
+    if (e.data?.type === 'jcj-resize') {
+        var f = document.getElementById('jcj-widget');
         f.style.width = e.data.width + 'px';
         f.style.height = e.data.height + 'px';
     }
